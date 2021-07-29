@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Сергей Диков](https://up.htmlacademy.ru/ecmascript/15/user/801717).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Глазков](https://htmlacademy.ru/profile/id1194253).
 
 ---
 
