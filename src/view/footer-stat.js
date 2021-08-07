@@ -1,1 +1,1 @@
-export const footerStat = () => '<p>130 291 movies inside</p>';
+export const footerStat = (filmCount) => `<p>${filmCount} movies inside</p>`;

@@ -1,5 +1,5 @@
-import dayjs from "dayjs";
-import { getHoursMins } from "../utils.js";
+import dayjs from 'dayjs';
+import { getHoursMins } from '../utils.js';
 
 export const filmDetails = (film) => {
   const {
@@ -20,8 +20,25 @@ export const filmDetails = (film) => {
   } = film;
 
   const hoursMinsRuntime = getHoursMins(runtime);
-  const getGenreSpans = () =>
-    genre.forEach((item) => `<span class="film-details__genre">${item}</span>`);
+  const getGenreMarkup = () =>
+    genre.map((item) => `<span class="film-details__genre">${item}</span>`);
+
+  const generateCommentsMarkup = () => {
+    const commentsMarkup = comments.map((item) => `<li class="film-details__comment">
+    <span class="film-details__comment-emoji">
+      <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
+    </span>
+    <div>
+      <p class="film-details__comment-text">${item.comment}</p>
+      <p class="film-details__comment-info">
+        <span class="film-details__comment-author">${item.author}</span>
+        <span class="film-details__comment-day">${item.date}</span>
+        <button class="film-details__comment-delete">Delete</button>
+      </p>
+    </div>
+  </li>`);
+    return commentsMarkup;
+  };
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -54,18 +71,20 @@ export const filmDetails = (film) => {
                 <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${writers}</td>
+                <td class="film-details__term">${
+  writers.length > 1 ? 'Writers' : 'Writer'
+}</td>
+                <td class="film-details__cell">${writers.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${actors}</td>
+                <td class="film-details__cell">${actors.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
                 <td class="film-details__cell">${dayjs(date).format(
-                  "DD MMMM YYYY"
-                )}</td>
+    'DD MMMM YYYY',
+  )}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -76,9 +95,11 @@ export const filmDetails = (film) => {
                 <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${
+  genre.length > 1 ? 'Genres' : 'Genre'
+}</td>
                 <td class="film-details__cell">
-                  ${getGenreSpans()}
+                  ${getGenreMarkup().join('')}
               </tr>
             </table>
   
@@ -97,61 +118,12 @@ export const filmDetails = (film) => {
   
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${
+  comments.length
+}</span></h3>
   
           <ul class="film-details__comments-list">
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Interesting setting and a good cast</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">Tim Macoveev</span>
-                  <span class="film-details__comment-day">2019/12/31 23:59</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Booooooooooring</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji-puke">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Very very old. Meh</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji-angry">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">Today</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
+            ${comments.length ? generateCommentsMarkup().join(' ') : ''}
           </ul>
   
           <div class="film-details__new-comment">
