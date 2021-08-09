@@ -1,4 +1,6 @@
-export const mainNavigation = (films) => {
+import { createElement } from "../utils.js";
+
+const getMainNavigationTemplate = (films) => {
   const watchingFilms = films.filter((item) => item.watchlist);
   const alreadyWatchedFilms = films.filter((item) => item.alreadyWatched);
   const favoriteFilms = films.filter((item) => item.favorite);
@@ -13,3 +15,26 @@ export const mainNavigation = (films) => {
     <a href="#stats" class="main-navigation__additional">Stats</a>
   </nav>`;
 };
+
+export default class MainNavigation {
+  constructor(films) {
+    this._element = null;
+    this.films = films;
+  }
+
+  getTemplate(films) {
+    return getMainNavigationTemplate(films);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this.films));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
