@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+const FILM_MOCK_COUNT = 17;
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -817,11 +818,11 @@ const generateCommentsDate = () => {
   let minutes = getRandomInteger(0, 59);
   let sec = getRandomInteger(0, 59);
 
-  month = month < 10 ? `0${  month}` : month;
-  day = day < 10 ? `0${  day}` : day;
-  hours = hours < 10 ? `0${  hours}` : hours;
-  minutes = minutes < 10 ? `0${  minutes}` : minutes;
-  sec = sec < 10 ? `0${  sec}` : sec;
+  month = month < 10 ? `0${month}` : month;
+  day = day < 10 ? `0${day}` : day;
+  hours = hours < 10 ? `0${hours}` : hours;
+  minutes = minutes < 10 ? `0${minutes}` : minutes;
+  sec = sec < 10 ? `0${sec}` : sec;
   return dayjs(
     `${year}-${month}-${day}T${hours}:${minutes}:${sec}.000Z`,
   ).format('YYYY/MM/DD HH:mm');
@@ -864,7 +865,7 @@ const generateCommentsList = () => {
   return commentsList;
 };
 
-export const generateFilm = (index) => ({
+const generateFilm = (index) => ({
   id: index,
   comments: generateCommentsList(),
   title: generateTitle(),
@@ -885,3 +886,13 @@ export const generateFilm = (index) => ({
   watchingDate: generateCommentsDate(),
   favorite: Boolean(getRandomInteger(0, 1)),
 });
+
+const generateMocks = (count) => {
+  const filmsMockList = [];
+  for (let i = 0; i < count; i++) {
+    filmsMockList.push(generateFilm(i));
+  }
+  return filmsMockList;
+};
+
+export const getFilms = () => generateMocks(FILM_MOCK_COUNT);

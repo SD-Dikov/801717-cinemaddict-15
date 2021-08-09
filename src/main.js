@@ -9,22 +9,13 @@ import { mostCommented } from './view/most-commented.js';
 import { filmCard } from './view/film-card.js';
 import { footerStat } from './view/footer-stat.js';
 import { filmDetails } from './view/film-details.js';
-import { generateFilm } from './mock/film';
+import { getFilms } from './mock/films-mock';
 
-const FILM_MOCK_COUNT = 38;
-const FILM_COUNT = 5;
-const EXTRA_FILM_COUNT = 2;
+const FILM_STEP_COUNT = 5;
+const EXTRA_FILM_STEP_COUNT = 2;
 
-const generateMocks = (count) => {
-  const filmsMockList = [];
-  for (let i = 0; i < count; i++) {
-    filmsMockList.push(generateFilm(i));
-  }
-  return filmsMockList;
-};
-
-const filmsMock = generateMocks(FILM_MOCK_COUNT);
-const filmsForRender = filmsMock;
+const movies = getFilms();
+const moviesForRender = movies;
 
 const render = (container, tamplate, place) => {
   container.insertAdjacentHTML(place, tamplate);
@@ -38,14 +29,13 @@ const footerStatisticsElement = siteFooterElement.querySelector(
   '.footer__statistics',
 );
 
-body.classList.add('hide-overflow');
-
-render(siteHeaderElement, headerProfile(), 'beforeend');
-render(siteMainElement, mainNavigation(filmsMock), 'beforeend');
+render(siteHeaderElement, headerProfile(movies), 'beforeend');
+render(siteMainElement, mainNavigation(movies), 'beforeend');
 render(siteMainElement, sortMenu(), 'beforeend');
 render(siteMainElement, films(), 'beforeend');
-render(footerStatisticsElement, footerStat(FILM_MOCK_COUNT), 'beforeend');
-render(siteMainElement, filmDetails(filmsMock[0]), 'beforeend');
+render(footerStatisticsElement, footerStat(movies.length), 'beforeend');
+render(siteMainElement, filmDetails(movies[0]), 'beforeend');
+body.classList.add('hide-overflow');
 
 const mainFilmsElement = siteMainElement.querySelector('.films');
 
@@ -64,11 +54,17 @@ const filmsListContainerElement = mainFilmsElement.querySelector(
 
 const renderFilms = () => {
   const filmsCount =
-    filmsForRender.length < FILM_COUNT ? filmsForRender.length : FILM_COUNT;
+    moviesForRender.length < FILM_STEP_COUNT
+      ? moviesForRender.length
+      : FILM_STEP_COUNT;
   for (let i = 0; i < filmsCount; i++) {
-    render(filmsListContainerElement, filmCard(filmsForRender[i]), 'beforeend');
+    render(
+      filmsListContainerElement,
+      filmCard(moviesForRender[i]),
+      'beforeend',
+    );
   }
-  filmsForRender.splice(0, filmsCount);
+  moviesForRender.splice(0, filmsCount);
 };
 
 renderFilms();
@@ -77,21 +73,21 @@ const topRatedElement = mainFilmsElement.querySelector(
   '.films-list__container--top-rated',
 );
 
-for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
-  render(topRatedElement, filmCard(filmsMock[i]), 'beforeend');
+for (let i = 0; i < EXTRA_FILM_STEP_COUNT; i++) {
+  render(topRatedElement, filmCard(movies[i]), 'beforeend');
 }
 
 const mostCommentedElement = mainFilmsElement.querySelector(
   '.films-list__container--most-commented',
 );
 
-for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
-  render(mostCommentedElement, filmCard(filmsMock[i]), 'beforeend');
+for (let i = 0; i < EXTRA_FILM_STEP_COUNT; i++) {
+  render(mostCommentedElement, filmCard(movies[i]), 'beforeend');
 }
 
 showMoreBtn.addEventListener('click', () => {
   renderFilms();
-  if (!filmsForRender.length) {
-    showMoreBtn.style.display = 'none';
+  if (!moviesForRender.length) {
+    showMoreBtn.remove();
   }
 });

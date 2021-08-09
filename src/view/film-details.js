@@ -17,6 +17,9 @@ export const filmDetails = (film) => {
     writers,
     actors,
     releaseCountry,
+    watchlist,
+    alreadyWatched,
+    favorite,
   } = film;
 
   const hoursMinsRuntime = getHoursMins(runtime);
@@ -24,7 +27,8 @@ export const filmDetails = (film) => {
     genre.map((item) => `<span class="film-details__genre">${item}</span>`);
 
   const generateCommentsMarkup = () => {
-    const commentsMarkup = comments.map((item) => `<li class="film-details__comment">
+    const commentsMarkup = comments.map(
+      (item) => `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
     </span>
@@ -36,7 +40,8 @@ export const filmDetails = (film) => {
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
-  </li>`);
+  </li>`,
+    );
     return commentsMarkup;
   };
 
@@ -110,9 +115,15 @@ export const filmDetails = (film) => {
         </div>
   
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button type="button" class="film-details__control-button film-details__control-button--watchlist ${
+  watchlist ? 'film-details__control-button--active' : ''
+}" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button type="button" class="film-details__control-button film-details__control-button--watched ${
+  alreadyWatched ? 'film-details__control-button--active' : ''
+}" id="watched" name="watched">Already watched</button>
+          <button type="button" class="film-details__control-button film-details__control-button--favorite ${
+  favorite ? 'film-details__control-button--active' : ''
+}" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
   
