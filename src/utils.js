@@ -5,8 +5,8 @@ const getHoursMins = (mins) => {
 };
 
 const RenderPosition = {
-  AFTERBEGIN: "afterbegin",
-  BEFOREEND: "beforeend",
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
 };
 
 const render = (container, element, place) => {
@@ -21,7 +21,7 @@ const render = (container, element, place) => {
 };
 
 const createElement = (template) => {
-  const newElement = document.createElement("div");
+  const newElement = document.createElement('div');
   newElement.innerHTML = template;
 
   return newElement.firstChild;

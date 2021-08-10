@@ -1,4 +1,4 @@
-import { createElement } from "../utils.js";
+import { createElement } from '../utils.js';
 
 const generateFilmsListTamplate = () => `<section class="films-list">
   <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
