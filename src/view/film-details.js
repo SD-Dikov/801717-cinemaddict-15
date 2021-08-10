@@ -1,7 +1,7 @@
-import dayjs from 'dayjs';
-import { getHoursMins } from '../utils.js';
+import dayjs from "dayjs";
+import { getHoursMins, createElement } from "../utils.js";
 
-export const filmDetails = (film) => {
+const getFilmDetailsTemplate = (film) => {
   const {
     comments,
     title,
@@ -40,7 +40,7 @@ export const filmDetails = (film) => {
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
-  </li>`,
+  </li>`
     );
     return commentsMarkup;
   };
@@ -77,19 +77,19 @@ export const filmDetails = (film) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${
-  writers.length > 1 ? 'Writers' : 'Writer'
-}</td>
-                <td class="film-details__cell">${writers.join(', ')}</td>
+                  writers.length > 1 ? "Writers" : "Writer"
+                }</td>
+                <td class="film-details__cell">${writers.join(", ")}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${actors.join(', ')}</td>
+                <td class="film-details__cell">${actors.join(", ")}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
                 <td class="film-details__cell">${dayjs(date).format(
-    'DD MMMM YYYY',
-  )}</td>
+                  "DD MMMM YYYY"
+                )}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -101,10 +101,10 @@ export const filmDetails = (film) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${
-  genre.length > 1 ? 'Genres' : 'Genre'
-}</td>
+                  genre.length > 1 ? "Genres" : "Genre"
+                }</td>
                 <td class="film-details__cell">
-                  ${getGenreMarkup().join('')}
+                  ${getGenreMarkup().join("")}
               </tr>
             </table>
   
@@ -116,25 +116,25 @@ export const filmDetails = (film) => {
   
         <section class="film-details__controls">
           <button type="button" class="film-details__control-button film-details__control-button--watchlist ${
-  watchlist ? 'film-details__control-button--active' : ''
-}" id="watchlist" name="watchlist">Add to watchlist</button>
+            watchlist ? "film-details__control-button--active" : ""
+          }" id="watchlist" name="watchlist">Add to watchlist</button>
           <button type="button" class="film-details__control-button film-details__control-button--watched ${
-  alreadyWatched ? 'film-details__control-button--active' : ''
-}" id="watched" name="watched">Already watched</button>
+            alreadyWatched ? "film-details__control-button--active" : ""
+          }" id="watched" name="watched">Already watched</button>
           <button type="button" class="film-details__control-button film-details__control-button--favorite ${
-  favorite ? 'film-details__control-button--active' : ''
-}" id="favorite" name="favorite">Add to favorites</button>
+            favorite ? "film-details__control-button--active" : ""
+          }" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
   
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${
-  comments.length
-}</span></h3>
+            comments.length
+          }</span></h3>
   
           <ul class="film-details__comments-list">
-            ${comments.length ? generateCommentsMarkup().join(' ') : ''}
+            ${comments.length ? generateCommentsMarkup().join(" ") : ""}
           </ul>
   
           <div class="film-details__new-comment">
@@ -171,3 +171,26 @@ export const filmDetails = (film) => {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate(film) {
+    return getFilmDetailsTemplate(film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this._film));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

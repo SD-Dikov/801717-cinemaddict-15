@@ -1,4 +1,6 @@
-export const headerProfile = (films) => {
+import { createElement } from '../utils.js';
+
+const generateHeaderProfileTemplate = (films) => {
   const alreadyWatchedFilms = films.filter((item) => item.alreadyWatched);
   const alreadyWatchedFilmsCount = alreadyWatchedFilms.length;
 
@@ -24,3 +26,26 @@ export const headerProfile = (films) => {
     <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
   </section>`;
 };
+
+export default class HeaderProfile {
+  constructor(films) {
+    this._films = films;
+    this._element = null;
+  }
+
+  getTemplate(films) {
+    return generateHeaderProfileTemplate(films);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this._films));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this.getElement = null;
+  }
+}

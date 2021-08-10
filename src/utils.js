@@ -9,7 +9,7 @@ const RenderPosition = {
   BEFOREEND: "beforeend",
 };
 
-const renderElement = (container, element, place) => {
+const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -20,10 +20,6 @@ const renderElement = (container, element, place) => {
   }
 };
 
-const renderTemplate = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const createElement = (template) => {
   const newElement = document.createElement("div");
   newElement.innerHTML = template;
@@ -31,10 +27,4 @@ const createElement = (template) => {
   return newElement.firstChild;
 };
 
-export {
-  getHoursMins,
-  createElement,
-  RenderPosition,
-  renderElement,
-  renderTemplate,
-};
+export { getHoursMins, createElement, RenderPosition, render };

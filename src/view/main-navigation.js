@@ -1,4 +1,4 @@
-import { createElement } from "../utils.js";
+import { createElement } from '../utils.js';
 
 const getMainNavigationTemplate = (films) => {
   const watchingFilms = films.filter((item) => item.watchlist);
@@ -19,7 +19,7 @@ const getMainNavigationTemplate = (films) => {
 export default class MainNavigation {
   constructor(films) {
     this._element = null;
-    this.films = films;
+    this._films = films;
   }
 
   getTemplate(films) {
@@ -28,7 +28,7 @@ export default class MainNavigation {
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate(this.films));
+      this._element = createElement(this.getTemplate(this._films));
     }
 
     return this._element;

@@ -1,6 +1,6 @@
-import { createElement } from "../utils.js";
+import { createElement } from '../utils.js';
 
-const createMoreBtnTemplate = () =>
+const generateMoreBtnTemplate = () =>
   '<button class="films-list__show-more">Show more</button>';
 
 export default class MoreBtn {
@@ -9,7 +9,7 @@ export default class MoreBtn {
   }
 
   getTemplate() {
-    return createMoreBtnTemplate();
+    return generateMoreBtnTemplate();
   }
 
   getElement() {
