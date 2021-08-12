@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-const FILM_MOCK_COUNT = 17;
+const FILM_MOCK_COUNT = 23;
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));

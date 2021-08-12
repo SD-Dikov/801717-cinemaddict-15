@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { getHoursMins } from '../utils.js';
+import { getHoursMins, createElement } from '../utils.js';
 
-export const filmDetails = (film) => {
+const getFilmDetailsTemplate = (film) => {
   const {
     comments,
     title,
@@ -171,3 +171,26 @@ export const filmDetails = (film) => {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate(film) {
+    return getFilmDetailsTemplate(film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(this._film));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
