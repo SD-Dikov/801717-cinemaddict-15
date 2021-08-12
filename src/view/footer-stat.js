@@ -5,7 +5,7 @@ const generateFooterStatTemplate = (filmCount) =>
 
 export default class FooterStat {
   constructor(filmCount) {
-    this._ilmCount = filmCount;
+    this._filmCount = filmCount;
     this._element = null;
   }
 
