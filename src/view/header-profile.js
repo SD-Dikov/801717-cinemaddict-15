@@ -1,4 +1,4 @@
-import { createElement } from '../utils.js';
+import AbstractView from './abstract-view';
 
 const generateHeaderProfileTemplate = (films) => {
   const alreadyWatchedFilms = films.filter((item) => item.alreadyWatched);
@@ -27,25 +27,13 @@ const generateHeaderProfileTemplate = (films) => {
   </section>`;
 };
 
-export default class HeaderProfile {
+export default class HeaderProfile extends AbstractView {
   constructor(films) {
+    super();
     this._films = films;
-    this._element = null;
   }
 
-  getTemplate(films) {
-    return generateHeaderProfileTemplate(films);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._films));
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this.getElement = null;
+  getTemplate() {
+    return generateHeaderProfileTemplate(this._films);
   }
 }
