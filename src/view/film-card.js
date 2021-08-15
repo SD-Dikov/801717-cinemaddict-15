@@ -1,5 +1,6 @@
+import AbstractView from './abstract-view';
 import dayjs from 'dayjs';
-import { getHoursMins, createElement } from '../utils.js';
+import { getHoursMins } from '../utils/common.js';
 
 const SYMBOL_COUNT = 140;
 
@@ -52,25 +53,33 @@ const getFilmCardTemplate = (film) => {
   </article>`;
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractView {
   constructor(film) {
-    this._element = null;
+    super();
     this._film = film;
+    this._linkElementsList = [
+      '.film-card__title',
+      '.film-card__poster',
+      '.film-card__comments',
+    ];
+    this._filmCardClickHandler = this._filmCardClickHandler.bind(this);
   }
 
-  getTemplate(film) {
-    return getFilmCardTemplate(film);
+  getTemplate() {
+    return getFilmCardTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-    }
-
-    return this._element;
+  _filmCardClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.filmCardClick(evt);
   }
 
-  removeElement() {
-    this._element = null;
+  setFilmCardClickHandler(callback) {
+    this._callback.filmCardClick = callback;
+    this._linkElementsList.forEach((item) => {
+      const element = this.getElement().querySelector(item);
+      element.style.cursor = 'pointer';
+      element.addEventListener('click', this._filmCardClickHandler);
+    });
   }
 }

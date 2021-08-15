@@ -1,5 +1,6 @@
+import AbstractView from './abstract-view';
 import dayjs from 'dayjs';
-import { getHoursMins, createElement } from '../utils.js';
+import { getHoursMins } from '../utils/common.js';
 
 const getFilmDetailsTemplate = (film) => {
   const {
@@ -172,25 +173,26 @@ const getFilmDetailsTemplate = (film) => {
   </section>`;
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractView {
   constructor(film) {
-    this._element = null;
+    super();
     this._film = film;
+    this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
   }
 
-  getTemplate(film) {
-    return getFilmDetailsTemplate(film);
+  getTemplate() {
+    return getFilmDetailsTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(this._film));
-    }
-
-    return this._element;
+  _closeBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeBtnClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseBtnClickHandler(callback) {
+    this._callback.closeBtnClick = callback;
+    this.getElement()
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeBtnClickHandler);
   }
 }
