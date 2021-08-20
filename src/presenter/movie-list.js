@@ -1,5 +1,6 @@
-import FilmsList from "../view/films-list.js";
 import FilmsContainer from "../view/films.js";
+import FilmsList from "../view/films-list.js";
+import FilmsListContainer from "../view/films-list-container.js";
 import HeaderProfile from "../view/header-profile.js";
 import MainNavigation from "../view/main-navigation.js";
 import MoreBtn from "../view/more-btn.js";
@@ -22,10 +23,11 @@ export default class MovieList {
 
     this._filmsListComponent = new FilmsList();
     this._filmsContainerComponent = new FilmsContainer();
+    this._filmsListContainerComponent = new FilmsListContainer();
     this._moreBtnComponent = new MoreBtn();
     this._sortMenuComponent = new SortMenu();
     this._filmCardComponent = new FilmCard();
-    this._filmDetailsComponent = new FilmDetails();
+    // this._filmDetailsComponent = new FilmDetails();
     this._mostCommentedComponent = new MostCommented();
     this._topRatedComponent = new TopRated();
   }
@@ -54,6 +56,13 @@ export default class MovieList {
       this._filmsListComponent,
       RenderPosition.BEFOREEND
     );
+    render(
+      this._filmsListComponent,
+      this._filmsListContainerComponent,
+      RenderPosition.BEFOREEND
+    );
+
+    this._renderMoreBtn();
   }
 
   _renderHeaderProfile() {
@@ -85,7 +94,7 @@ export default class MovieList {
 
     this._moreBtnComponent.setClickHandler(() => {
       this._renderMovies();
-      if (this._moviesForRender.length) {
+      if (!this._moviesForRender.length) {
         remove(this._moreBtnComponent);
       }
     });
@@ -108,7 +117,7 @@ export default class MovieList {
     });
 
     render(
-      this._filmsContainerComponent,
+      this._filmsListContainerComponent,
       filmComponent,
       RenderPosition.BEFOREEND
     );
@@ -119,21 +128,21 @@ export default class MovieList {
     this.openedFilmDetails = null;
   }
 
-  _renderFilmDetails() {
+  _renderFilmDetails(film) {
     if (this.openedFilmDetails instanceof FilmDetails) {
       this._removeFilmDetails();
     }
 
-    this.openedFilmDetails = this._filmDetailsComponent;
+    this.openedFilmDetails = new FilmDetails(film);
 
     this.openedFilmDetails.setCloseBtnClickHandler(() => {
-      body.classList.remove("hide-overflow");
+      this._bodyContaner.classList.remove("hide-overflow");
       this._removeFilmDetails();
     });
 
-    body.classList.add("hide-overflow");
+    this._bodyContaner.classList.add("hide-overflow");
     render(
-      this._movieContainer,
+      this._bodyContaner,
       this.openedFilmDetails,
       RenderPosition.BEFOREEND
     );
