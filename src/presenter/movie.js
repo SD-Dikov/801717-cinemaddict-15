@@ -1,67 +1,59 @@
-// import FilmCard from "./view/film-card.js";
-// import FilmDetails from "./view/film-details.js";
-// import MostCommented from "./view/most-commented.js";
-// import TopRated from "./view/top-rated.js";
-// import { render, RenderPosition, remove } from "./utils/render.js";
+import FilmCard from "../view/film-card.js";
+import FilmDetails from "../view/film-details.js";
+import { render, RenderPosition, remove } from "../utils/render.js";
 
-// export default class Movie {
-//   constructor(movieContainer, film, movies) {
-//     this._movieContainer = movieContainer;
-//     this._film = film;
-//     this._movies = movies;
-//     this.openedFilmDetails = null;
+export default class MoviePresenter {
+  constructor(container, movies, bodyContainer) {
+    this._container = container;
+    this._bodyContainer = bodyContainer;
+    this._movies = movies;
+    this._openedFilmDetails = null;
+  }
 
-//     this._filmCardComponent = new FilmCard(this._film);
-//     this._filmDetailsComponent = new FilmDetails(this._film);
-//     this._mostCommentedComponent = new MostCommented();
-//     this._topRatedComponent = new TopRated();
-//   }
+  init(film) {
+    this._film = film;
+    this._renderFilmCard();
+  }
 
-//   _renderFilmCard() {
-//     const openFilmDetails = (filmId) => {
-//       const filmForPopup = this._movies.find(
-//         (item) => Number(item.id) === Number(filmId)
-//       );
-//       this._renderFilmDetails(filmForPopup);
-//     };
+  _renderFilmCard() {
+    const filmComponent = new FilmCard(this._film);
 
-//     this._movieContainer.setFilmCardClickHandler((evt) => {
-//       openFilmDetails(evt.target.dataset.popup);
-//     });
+    const openFilmDetails = (filmId) => {
+      const filmForPopup = this._movies.find(
+        (item) => Number(item.id) === Number(filmId)
+      );
+      this._renderFilmDetails(filmForPopup);
+    };
 
-//     render(
-//       this._movieContainer,
-//       this._filmCardComponent,
-//       RenderPosition.BEFOREEND
-//     );
-//   }
+    filmComponent.setFilmCardClickHandler((evt) => {
+      openFilmDetails(evt.target.dataset.popup);
+    });
 
-//   _removeFilmDetails() {
-//     remove(this.openedFilmDetails);
-//     this.openedFilmDetails = null;
-//   }
+    render(this._container, filmComponent, RenderPosition.BEFOREEND);
+  }
 
-//   _renderFilmDetails() {
-//     const body = document.querySelector("body");
+  _removeFilmDetails() {
+    remove(this._openedFilmDetails);
+    this._openedFilmDetails = null;
+  }
 
-//     if (this.openedFilmDetails instanceof FilmDetails) {
-//       this._removeFilmDetails();
-//     }
+  _renderFilmDetails(film) {
+    if (this._openedFilmDetails instanceof FilmDetails) {
+      this._removeFilmDetails();
+    }
 
-//     this.openedFilmDetails = this._filmDetailsComponent;
+    this._openedFilmDetails = new FilmDetails(film);
 
-//     this.openedFilmDetails.setCloseBtnClickHandler(() => {
-//       body.classList.remove("hide-overflow");
-//       this._removeFilmDetails();
-//     });
+    this._openedFilmDetails.setCloseBtnClickHandler(() => {
+      this._bodyContainer.classList.remove("hide-overflow");
+      this._removeFilmDetails();
+    });
 
-//     body.classList.add("hide-overflow");
-//     render(
-//       this._movieContainer,
-//       this.openedFilmDetails,
-//       RenderPosition.BEFOREEND
-//     );
-//   }
-//   _renderMostCommented() {}
-//   _renderTopRated() {}
-// }
+    this._bodyContainer.classList.add("hide-overflow");
+    render(
+      this._bodyContainer,
+      this._openedFilmDetails,
+      RenderPosition.BEFOREEND
+    );
+  }
+}

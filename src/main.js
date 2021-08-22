@@ -18,12 +18,12 @@ import MovieList from "./presenter/movie-list";
 
 const movies = getFilms();
 // const moviesForRender = movies.slice();
-const moviesRatingSort = movies
-  .slice()
-  .sort((prev, next) => next.totalRating - prev.totalRating);
-const moviesCommentCountSort = movies
-  .slice()
-  .sort((prev, next) => next.comments.length - prev.comments.length);
+// const moviesRatingSort = movies
+//   .slice()
+//   .sort((prev, next) => next.totalRating - prev.totalRating);
+// const moviesCommentCountSort = movies
+//   .slice()
+//   .sort((prev, next) => next.comments.length - prev.comments.length);
 
 const body = document.querySelector("body");
 const siteMainElement = document.querySelector(".main");
