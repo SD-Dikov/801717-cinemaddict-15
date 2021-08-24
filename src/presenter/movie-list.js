@@ -6,13 +6,14 @@ import MainNavigation from "../view/main-navigation.js";
 import MoreBtn from "../view/more-btn.js";
 import SortMenu from "../view/sort-menu.js";
 import MoviePresenter from "./movie";
-import FilmCard from "../view/film-card.js";
-import FilmDetails from "../view/film-details.js";
+// import FilmCard from "../view/film-card.js";
+// import FilmDetails from "../view/film-details.js";
 import MostCommented from "../view/most-commented.js";
 import TopRated from "../view/top-rated.js";
 import TopRatedContainer from "../view/top-rated-container.js";
 import MostCommentedContainer from "../view/most-commented-container.js";
 import { render, RenderPosition, remove } from "../utils/render.js";
+import { updateItem } from "../utils/common.js";
 
 const FILM_STEP_COUNT = 5;
 const EXTRA_FILM_STEP_COUNT = 2;
@@ -35,11 +36,14 @@ export default class MovieList {
     this._topRatedComponent = new TopRated();
     this._MostCommentedContainerComponent = new MostCommentedContainer();
     this._TopRatedContainerComponent = new TopRatedContainer();
+
+    this._handleMovieChange = this._handleMovieChange.bind(this);
   }
 
   init(movies) {
     this._movies = movies;
     this._moviesForRender = movies.slice();
+    this._moviePresenter = new Map();
     this._moviesRatingSort = movies
       .slice()
       .sort((prev, next) => next.totalRating - prev.totalRating);
@@ -104,6 +108,11 @@ export default class MovieList {
     this._renderMoreBtn();
   }
 
+  _handleMovieChange(updatedMovie) {
+    this._movies = updateItem(this._movies, updatedMovie);
+    this._moviePresenter.get(updatedMovie.id).init(updatedMovie);
+  }
+
   _renderHeaderProfile() {
     const headerProfileComponent = new HeaderProfile(this._movies);
 
@@ -160,10 +169,13 @@ export default class MovieList {
     const moviePresenter = new MoviePresenter(
       container,
       this._movies,
-      this._bodyContainer
+      this._bodyContainer,
+      this._handleMovieChange
     );
 
     moviePresenter.init(film);
+
+    this._moviePresenter.set(film.id, moviePresenter);
   }
 
   // _removeFilmDetails() {
