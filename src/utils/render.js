@@ -1,15 +1,15 @@
-import AbstractView from "../view/abstract-view.js";
+import AbstractView from '../view/abstract-view.js';
 
 const createElement = (template) => {
-  const newElement = document.createElement("div");
+  const newElement = document.createElement('div');
   newElement.innerHTML = template;
 
   return newElement.firstChild;
 };
 
 const RenderPosition = {
-  AFTERBEGIN: "afterbegin",
-  BEFOREEND: "beforeend",
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
 };
 
 const render = (container, element, place) => {
@@ -33,7 +33,7 @@ const render = (container, element, place) => {
 
 const remove = (component) => {
   if (!(component instanceof AbstractView)) {
-    throw new Error("Can remove only components");
+    throw new Error('Can remove only components');
   }
 
   component.getElement().remove();
@@ -52,7 +52,7 @@ const replace = (newChild, oldChild) => {
   const parent = oldChild.parentElement;
 
   if (parent === null || oldChild === null || newChild === null) {
-    throw new Error("Can't replace unexisting elements");
+    throw new Error('Can\'t replace unexisting elements');
   }
 
   parent.replaceChild(newChild, oldChild);

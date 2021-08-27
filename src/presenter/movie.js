@@ -1,26 +1,30 @@
-import FilmCard from "../view/film-card.js";
-import FilmDetails from "../view/film-details.js";
-import { render, RenderPosition, remove, replace } from "../utils/render.js";
-
-// let openedFilmDetails = null;
+import FilmCard from '../view/film-card.js';
+import FilmDetails from '../view/film-details.js';
+import { render, RenderPosition, remove, replace } from '../utils/render.js';
 
 export default class MoviePresenter {
-  constructor(container, movies, bodyContainer, changeData) {
+  constructor(container, movies, bodyContainer, changeData, removePopup) {
     this._container = container;
     this._bodyContainer = bodyContainer;
-    this._movies = movies;
-    this._changeData = changeData;
 
+    this._movies = movies;
+    this._removePopup = removePopup;
+    this._changeData = changeData;
     this._filmComponent = null;
     this._detailComponent = null;
 
     this._handleFilmCardClick = this._handleFilmCardClick.bind(this);
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleAlreadyWatchedClick =
+      this._handleAlreadyWatchedClick.bind(this);
+    this._handleAddToFavoritesClick =
+      this._handleAddToFavoritesClick.bind(this);
   }
 
-  init(film) {
+  init(film, isPopupRendered) {
     this._film = film;
+    this._isPopupRendered = isPopupRendered;
 
     const prevFilmComponent = this._filmComponent;
     const prevDetailComponent = this._detailComponent;
@@ -29,9 +33,22 @@ export default class MoviePresenter {
     this._detailComponent = new FilmDetails(this._film);
 
     this._filmComponent.setFilmCardClickHandler(this._handleFilmCardClick);
-    this._filmComponent.setwatchlistClickHandler(this._handleWatchlistClick);
-    this._detailComponent.setwatchlistClickHandler(this._handleWatchlistClick);
+    this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmComponent.setAlreadyWatchedClickHandler(
+      this._handleAlreadyWatchedClick,
+    );
+    this._filmComponent.setAddToFavoritesClickHandler(
+      this._handleAddToFavoritesClick,
+    );
+
     this._detailComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
+    this._detailComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._detailComponent.setAlreadyWatchedClickHandler(
+      this._handleAlreadyWatchedClick,
+    );
+    this._detailComponent.setAddToFavoritesClickHandler(
+      this._handleAddToFavoritesClick,
+    );
 
     if (prevFilmComponent === null || prevDetailComponent === null) {
       this._renderFilmCard();
@@ -41,8 +58,8 @@ export default class MoviePresenter {
     if (this._container.getElement().contains(prevFilmComponent.getElement())) {
       replace(this._filmComponent, prevFilmComponent);
     }
+
     if (this._bodyContainer.contains(prevDetailComponent.getElement())) {
-      console.log("privet");
       replace(this._detailComponent, prevDetailComponent);
     }
 
@@ -50,30 +67,9 @@ export default class MoviePresenter {
     remove(prevDetailComponent);
   }
 
-  // _removeFilmDetails() {
-  //   remove(openedFilmDetails);
-  //   openedFilmDetails = null;
-  //   this._bodyContainer.classList.remove("hide-overflow");
-  // }
-
-  // _renderFilmDetails(film) {
-  //   if (openedFilmDetails instanceof FilmDetails) {
-  //     this._removeFilmDetails();
-  //   }
-
-  //   openedFilmDetails = new FilmDetails(film);
-
-  //   openedFilmDetails.setCloseBtnClickHandler(() => {
-  //     this._removeFilmDetails();
-  //   });
-
-  //   this._bodyContainer.classList.add("hide-overflow");
-  //   render(this._bodyContainer, openedFilmDetails, RenderPosition.BEFOREEND);
-  // }
-
   _removeFilmDetails() {
-    remove(this._detailComponent);
-    this._bodyContainer.classList.remove("hide-overflow");
+    this._detailComponent.getElement().remove();
+    this._bodyContainer.classList.remove('hide-overflow');
   }
 
   _handleCloseBtnClick() {
@@ -81,64 +77,45 @@ export default class MoviePresenter {
   }
 
   _renderFilmDetails() {
-    // if (this._detailComponent instanceof FilmDetails) {
-    //   this._removeFilmDetails();
-    // }
-
-    // this._detailComponent = new FilmDetails(film);
-
-    // this._detailComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
-
-    this._bodyContainer.classList.add("hide-overflow");
+    this._bodyContainer.classList.add('hide-overflow');
 
     render(
       this._bodyContainer,
       this._detailComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
   _renderFilmCard() {
-    // const filmComponent = new FilmCard(this._film);
-
-    // const openFilmDetails = (filmId) => {
-    //   const filmForPopup = this._movies.find(
-    //     (item) => Number(item.id) === Number(filmId)
-    //   );
-    //   this._renderFilmDetails(filmForPopup);
-    // };
-
-    // filmComponent.setFilmCardClickHandler((evt) => {
-    //   openFilmDetails(evt.target.dataset.popup);
-    // });
-
     render(this._container, this._filmComponent, RenderPosition.BEFOREEND);
   }
 
-  _handleFilmCardClick(evt) {
-    // const openFilmDetails = (filmId) => {
-    //   const filmForPopup = this._movies.find(
-    //     (item) => Number(item.id) === Number(filmId)
-    //   );
-    //   this._renderFilmDetails(filmForPopup);
-    // };
-
-    this._openFilmDetails(evt.target.dataset.popup);
-  }
-
-  _openFilmDetails(filmId) {
-    const filmForPopup = this._movies.find(
-      (item) => Number(item.id) === Number(filmId)
-    );
-    this._renderFilmDetails(filmForPopup);
+  _handleFilmCardClick() {
+    this._removePopup();
+    this._renderFilmDetails();
   }
 
   _handleWatchlistClick() {
     this._changeData(
       Object.assign({}, this._film, {
         watchlist: !this._film.watchlist,
-      })
+      }),
     );
-    console.log(this._film);
+  }
+
+  _handleAlreadyWatchedClick() {
+    this._changeData(
+      Object.assign({}, this._film, {
+        alreadyWatched: !this._film.alreadyWatched,
+      }),
+    );
+  }
+
+  _handleAddToFavoritesClick() {
+    this._changeData(
+      Object.assign({}, this._film, {
+        favorite: !this._film.favorite,
+      }),
+    );
   }
 }

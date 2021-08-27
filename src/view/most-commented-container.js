@@ -1,7 +1,7 @@
-import AbstractView from "./abstract-view";
+import AbstractView from './abstract-view';
 
 const generateMostCommentedTemplate = () =>
-  `<div class="films-list__container films-list__container--most-commented"></div>`;
+  '<div class="films-list__container films-list__container--most-commented"></div>';
 
 export default class MostCommentedContainer extends AbstractView {
   getTemplate() {
