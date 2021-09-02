@@ -32,7 +32,7 @@ export default class SmartView extends AbstractView {
     this.restoreHandlers();
   }
 
-  restorHandlers() {
+  restoreHandlers() {
     throw new Error("Abstract method not implemented: resetHandlers");
   }
 }

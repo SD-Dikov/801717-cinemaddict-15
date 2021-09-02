@@ -183,23 +183,28 @@ const getFilmDetailsTemplate = (data) => {
 export default class FilmDetails extends SmartView {
   constructor(film) {
     super();
-    this._film = film;
+    this._data = FilmDetails.parseFilmToData(film);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._alreadyWatchedClickHandler =
       this._alreadyWatchedClickHandler.bind(this);
     this._addToFavoritesClickHandler =
       this._addToFavoritesClickHandler.bind(this);
+    this._emojiRadioHendler = this._emojiRadioHendler.bind(this);
 
     this._setInnerHandlers();
   }
 
   getTemplate() {
-    return getFilmDetailsTemplate(this._film);
+    return getFilmDetailsTemplate(this._data);
   }
 
-  restorHandlers() {
+  restoreHandlers() {
     this._setInnerHandlers();
+    this.setCloseBtnClickHandler(this._callback.closeBtnClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setAddToFavoritesClickHandler(this._callback.addToFavoritesClick);
   }
 
   _setInnerHandlers() {
@@ -210,10 +215,12 @@ export default class FilmDetails extends SmartView {
 
   _emojiRadioHendler(evt) {
     evt.preventDefault();
+    const posTop = this._element.scrollTop;
     const emojiValue = evt.target.value;
     this.updateData({
       emojiValue,
     });
+    this._element.scrollTop = posTop;
   }
 
   _closeBtnClickHandler(evt) {
@@ -262,5 +269,11 @@ export default class FilmDetails extends SmartView {
     this.getElement()
       .querySelector(".film-details__control-button--favorite")
       .addEventListener("click", this._addToFavoritesClickHandler);
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign({}, film, {
+      emojiValue: null,
+    });
   }
 }
