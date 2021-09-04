@@ -1,6 +1,6 @@
-import FilmCard from "../view/film-card.js";
-import FilmDetails from "../view/film-details.js";
-import { render, RenderPosition, remove, replace } from "../utils/render.js";
+import FilmCard from '../view/film-card.js';
+import FilmDetails from '../view/film-details.js';
+import { render, RenderPosition, remove, replace } from '../utils/render.js';
 
 export default class MoviePresenter {
   constructor(container, movies, bodyContainer, changeData, removePopup) {
@@ -35,19 +35,19 @@ export default class MoviePresenter {
     this._filmComponent.setFilmCardClickHandler(this._handleFilmCardClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmComponent.setAlreadyWatchedClickHandler(
-      this._handleAlreadyWatchedClick
+      this._handleAlreadyWatchedClick,
     );
     this._filmComponent.setAddToFavoritesClickHandler(
-      this._handleAddToFavoritesClick
+      this._handleAddToFavoritesClick,
     );
 
     this._detailComponent.setCloseBtnClickHandler(this._handleCloseBtnClick);
     this._detailComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._detailComponent.setAlreadyWatchedClickHandler(
-      this._handleAlreadyWatchedClick
+      this._handleAlreadyWatchedClick,
     );
     this._detailComponent.setAddToFavoritesClickHandler(
-      this._handleAddToFavoritesClick
+      this._handleAddToFavoritesClick,
     );
 
     if (prevFilmComponent === null || prevDetailComponent === null) {
@@ -71,7 +71,7 @@ export default class MoviePresenter {
 
   _removeFilmDetails() {
     this._detailComponent.getElement().remove();
-    this._bodyContainer.classList.remove("hide-overflow");
+    this._bodyContainer.classList.remove('hide-overflow');
   }
 
   _handleCloseBtnClick() {
@@ -79,12 +79,12 @@ export default class MoviePresenter {
   }
 
   _renderFilmDetails() {
-    this._bodyContainer.classList.add("hide-overflow");
+    this._bodyContainer.classList.add('hide-overflow');
 
     render(
       this._bodyContainer,
       this._detailComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -101,7 +101,7 @@ export default class MoviePresenter {
     this._changeData(
       Object.assign({}, this._film, {
         watchlist: !this._film.watchlist,
-      })
+      }),
     );
   }
 
@@ -109,7 +109,7 @@ export default class MoviePresenter {
     this._changeData(
       Object.assign({}, this._film, {
         alreadyWatched: !this._film.alreadyWatched,
-      })
+      }),
     );
   }
 
@@ -117,7 +117,7 @@ export default class MoviePresenter {
     this._changeData(
       Object.assign({}, this._film, {
         favorite: !this._film.favorite,
-      })
+      }),
     );
   }
 }

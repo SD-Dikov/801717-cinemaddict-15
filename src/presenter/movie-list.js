@@ -1,17 +1,17 @@
-import FilmsContainer from "../view/films.js";
-import FilmsList from "../view/films-list.js";
-import FilmsListContainer from "../view/films-list-container.js";
-import HeaderProfile from "../view/header-profile.js";
-import MainNavigation from "../view/main-navigation.js";
-import MoreBtn from "../view/more-btn.js";
-import SortMenu from "../view/sort-menu.js";
-import MoviePresenter from "./movie";
-import MostCommented from "../view/most-commented.js";
-import TopRated from "../view/top-rated.js";
-import TopRatedContainer from "../view/top-rated-container.js";
-import MostCommentedContainer from "../view/most-commented-container.js";
-import { render, RenderPosition, remove } from "../utils/render.js";
-import { updateItem } from "../utils/common.js";
+import FilmsContainer from '../view/films.js';
+import FilmsList from '../view/films-list.js';
+import FilmsListContainer from '../view/films-list-container.js';
+import HeaderProfile from '../view/header-profile.js';
+import MainNavigation from '../view/main-navigation.js';
+import MoreBtn from '../view/more-btn.js';
+import SortMenu from '../view/sort-menu.js';
+import MoviePresenter from './movie';
+import MostCommented from '../view/most-commented.js';
+import TopRated from '../view/top-rated.js';
+import TopRatedContainer from '../view/top-rated-container.js';
+import MostCommentedContainer from '../view/most-commented-container.js';
+import { render, RenderPosition, remove } from '../utils/render.js';
+import { updateItem } from '../utils/common.js';
 
 const FILM_STEP_COUNT = 5;
 const EXTRA_FILM_STEP_COUNT = 2;
@@ -42,6 +42,8 @@ export default class MovieList {
     this._movies = movies;
     this._moviesForRender = movies.slice();
     this._moviePresenter = new Map();
+    this._mostCommentedPresenter = new Map();
+    this._topRatedPresenter = new Map();
     this._moviesRatingSort = movies
       .slice()
       .sort((prev, next) => next.totalRating - prev.totalRating);
@@ -52,7 +54,7 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._sortMenuComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
 
     this._renderMovies();
@@ -62,57 +64,68 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._filmsContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._filmsContainerComponent,
       this._filmsListComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._filmsListComponent,
       this._filmsListContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._filmsContainerComponent,
       this._topRatedComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._filmsContainerComponent,
       this._mostCommentedComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._topRatedComponent,
       this._TopRatedContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._mostCommentedComponent,
       this._MostCommentedContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
+    this._renderMoreBtn();
 
     this._renderExstraFilms(
       this._moviesRatingSort,
-      this._TopRatedContainerComponent
+      this._TopRatedContainerComponent,
     );
     this._renderExstraFilms(
       this._moviesCommentCountSort,
-      this._MostCommentedContainerComponent
+      this._MostCommentedContainerComponent,
     );
-    this._renderMoreBtn();
   }
 
   _handleMovieChange(updatedMovie) {
     this._movies = updateItem(this._movies, updatedMovie);
     this._moviePresenter.get(updatedMovie.id).init(updatedMovie);
+    if (this._topRatedPresenter.has(updatedMovie.id)) {
+      this._moviesRatingSort = updateItem(this._moviesRatingSort, updatedMovie);
+      this._topRatedPresenter.get(updatedMovie.id).init(updatedMovie);
+    }
+    if (this._mostCommentedPresenter.has(updatedMovie.id)) {
+      this._moviesCommentCountSort = updateItem(
+        this._moviesCommentCountSort,
+        updatedMovie,
+      );
+      this._mostCommentedPresenter.get(updatedMovie.id).init(updatedMovie);
+    }
   }
 
   _removePopup() {
-    const filmDetailsPopup = this._bodyContainer.querySelector(".film-details");
+    const filmDetailsPopup = this._bodyContainer.querySelector('.film-details');
 
     if (filmDetailsPopup) {
       filmDetailsPopup.remove();
@@ -125,7 +138,7 @@ export default class MovieList {
     render(
       this._headerContainer,
       headerProfileComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -135,7 +148,7 @@ export default class MovieList {
     render(
       this._mainContainer,
       mainNavigationComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -143,7 +156,7 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._moreBtnComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
 
     this._moreBtnComponent.setClickHandler(() => {
@@ -160,12 +173,20 @@ export default class MovieList {
       this._movies,
       this._bodyContainer,
       this._handleMovieChange,
-      this._removePopup
+      this._removePopup,
     );
 
     moviePresenter.init(film);
 
-    this._moviePresenter.set(film.id, moviePresenter);
+    if (this._moviesRatingSort.slice(0, 2).includes(film)) {
+      this._topRatedPresenter.set(film.id, moviePresenter);
+    }
+    if (this._moviesCommentCountSort.slice(0, 2).includes(film)) {
+      this._mostCommentedPresenter.set(film.id, moviePresenter);
+    }
+    if (!this._moviePresenter.has(film.id)) {
+      this._moviePresenter.set(film.id, moviePresenter);
+    }
   }
 
   _renderExstraFilms(movieList, container) {
@@ -182,7 +203,7 @@ export default class MovieList {
     for (let i = 0; i < filmsCount; i++) {
       this._renderFilmCard(
         this._moviesForRender[i],
-        this._filmsListContainerComponent
+        this._filmsListContainerComponent,
       );
     }
     this._moviesForRender.splice(0, filmsCount);
