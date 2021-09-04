@@ -42,6 +42,8 @@ export default class MovieList {
     this._movies = movies;
     this._moviesForRender = movies.slice();
     this._moviePresenter = new Map();
+    this._mostCommentedPresenter = new Map();
+    this._topRatedPresenter = new Map();
     this._moviesRatingSort = movies
       .slice()
       .sort((prev, next) => next.totalRating - prev.totalRating);
@@ -94,6 +96,7 @@ export default class MovieList {
       this._MostCommentedContainerComponent,
       RenderPosition.BEFOREEND,
     );
+    this._renderMoreBtn();
 
     this._renderExstraFilms(
       this._moviesRatingSort,
@@ -103,12 +106,22 @@ export default class MovieList {
       this._moviesCommentCountSort,
       this._MostCommentedContainerComponent,
     );
-    this._renderMoreBtn();
   }
 
   _handleMovieChange(updatedMovie) {
     this._movies = updateItem(this._movies, updatedMovie);
     this._moviePresenter.get(updatedMovie.id).init(updatedMovie);
+    if (this._topRatedPresenter.has(updatedMovie.id)) {
+      this._moviesRatingSort = updateItem(this._moviesRatingSort, updatedMovie);
+      this._topRatedPresenter.get(updatedMovie.id).init(updatedMovie);
+    }
+    if (this._mostCommentedPresenter.has(updatedMovie.id)) {
+      this._moviesCommentCountSort = updateItem(
+        this._moviesCommentCountSort,
+        updatedMovie,
+      );
+      this._mostCommentedPresenter.get(updatedMovie.id).init(updatedMovie);
+    }
   }
 
   _removePopup() {
@@ -165,7 +178,15 @@ export default class MovieList {
 
     moviePresenter.init(film);
 
-    this._moviePresenter.set(film.id, moviePresenter);
+    if (this._moviesRatingSort.slice(0, 2).includes(film)) {
+      this._topRatedPresenter.set(film.id, moviePresenter);
+    }
+    if (this._moviesCommentCountSort.slice(0, 2).includes(film)) {
+      this._mostCommentedPresenter.set(film.id, moviePresenter);
+    }
+    if (!this._moviePresenter.has(film.id)) {
+      this._moviePresenter.set(film.id, moviePresenter);
+    }
   }
 
   _renderExstraFilms(movieList, container) {

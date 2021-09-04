@@ -1,8 +1,8 @@
-import AbstractView from './abstract-view';
+import SmartView from './smart-view';
 import dayjs from 'dayjs';
 import { getHoursMins } from '../utils/common.js';
 
-const getFilmDetailsTemplate = (film) => {
+const getFilmDetailsTemplate = (data) => {
   const {
     comments,
     title,
@@ -21,7 +21,8 @@ const getFilmDetailsTemplate = (film) => {
     watchlist,
     alreadyWatched,
     favorite,
-  } = film;
+    emojiValue,
+  } = data;
 
   const hoursMinsRuntime = getHoursMins(runtime);
   const getGenreMarkup = () =>
@@ -77,9 +78,8 @@ const getFilmDetailsTemplate = (film) => {
                 <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${
-  writers.length > 1 ? 'Writers' : 'Writer'
-}</td>
+                <td class="film-details__term">${writers.length > 1 ? 'Writers' : 'Writer'}
+                </td>
                 <td class="film-details__cell">${writers.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
@@ -88,9 +88,8 @@ const getFilmDetailsTemplate = (film) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${dayjs(date).format(
-    'DD MMMM YYYY',
-  )}</td>
+                <td class="film-details__cell">${dayjs(date).format('DD MMMM YYYY')}
+                </td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -101,9 +100,8 @@ const getFilmDetailsTemplate = (film) => {
                 <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${
-  genre.length > 1 ? 'Genres' : 'Genre'
-}</td>
+                <td class="film-details__term">${genre.length > 1 ? 'Genres' : 'Genre'}
+                </td>
                 <td class="film-details__cell">
                   ${getGenreMarkup().join('')}
               </tr>
@@ -139,7 +137,13 @@ const getFilmDetailsTemplate = (film) => {
           </ul>
   
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label">
+              ${
+  emojiValue
+    ? `<img src="./images/emoji/${emojiValue}.png" width="55" height="55" alt=emoji-${emojiValue}></img>`
+    : ''
+}
+            </div>
   
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -173,20 +177,48 @@ const getFilmDetailsTemplate = (film) => {
   </section>`;
 };
 
-export default class FilmDetails extends AbstractView {
+export default class FilmDetails extends SmartView {
   constructor(film) {
     super();
-    this._film = film;
+    this._data = FilmDetails.parseFilmToData(film);
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._alreadyWatchedClickHandler =
       this._alreadyWatchedClickHandler.bind(this);
     this._addToFavoritesClickHandler =
       this._addToFavoritesClickHandler.bind(this);
+    this._emojiRadioHendler = this._emojiRadioHendler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return getFilmDetailsTemplate(this._film);
+    return getFilmDetailsTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setCloseBtnClickHandler(this._callback.closeBtnClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setAddToFavoritesClickHandler(this._callback.addToFavoritesClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('input', this._emojiRadioHendler);
+  }
+
+  _emojiRadioHendler(evt) {
+    evt.preventDefault();
+    const posTop = this._element.scrollTop;
+    const emojiValue = evt.target.value;
+    this.updateData({
+      emojiValue,
+    });
+    document.querySelector(`#emoji-${emojiValue}`).setAttribute('checked', 'true');
+    this._element.scrollTop = posTop;
   }
 
   _closeBtnClickHandler(evt) {
@@ -235,5 +267,11 @@ export default class FilmDetails extends AbstractView {
     this.getElement()
       .querySelector('.film-details__control-button--favorite')
       .addEventListener('click', this._addToFavoritesClickHandler);
+  }
+
+  static parseFilmToData(film) {
+    return Object.assign({}, film, {
+      emojiValue: null,
+    });
   }
 }

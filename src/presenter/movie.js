@@ -60,7 +60,9 @@ export default class MoviePresenter {
     }
 
     if (this._bodyContainer.contains(prevDetailComponent.getElement())) {
+      const posTop = prevDetailComponent.getElement().scrollTop;
       replace(this._detailComponent, prevDetailComponent);
+      this._detailComponent.getElement().scrollTop = posTop;
     }
 
     remove(prevFilmComponent);
