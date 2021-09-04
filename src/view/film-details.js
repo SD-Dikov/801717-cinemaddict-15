@@ -78,9 +78,8 @@ const getFilmDetailsTemplate = (data) => {
                 <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${
-  writers.length > 1 ? 'Writers' : 'Writer'
-}</td>
+                <td class="film-details__term">${writers.length > 1 ? 'Writers' : 'Writer'}
+                </td>
                 <td class="film-details__cell">${writers.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
@@ -89,9 +88,8 @@ const getFilmDetailsTemplate = (data) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${dayjs(date).format(
-    'DD MMMM YYYY',
-  )}</td>
+                <td class="film-details__cell">${dayjs(date).format('DD MMMM YYYY')}
+                </td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -102,9 +100,8 @@ const getFilmDetailsTemplate = (data) => {
                 <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${
-  genre.length > 1 ? 'Genres' : 'Genre'
-}</td>
+                <td class="film-details__term">${genre.length > 1 ? 'Genres' : 'Genre'}
+                </td>
                 <td class="film-details__cell">
                   ${getGenreMarkup().join('')}
               </tr>
@@ -220,6 +217,7 @@ export default class FilmDetails extends SmartView {
     this.updateData({
       emojiValue,
     });
+    document.querySelector(`#emoji-${emojiValue}`).setAttribute('checked', 'true');
     this._element.scrollTop = posTop;
   }
 
