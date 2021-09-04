@@ -1,23 +1,30 @@
-import FilmsContainer from '../view/films.js';
-import FilmsList from '../view/films-list.js';
-import FilmsListContainer from '../view/films-list-container.js';
-import HeaderProfile from '../view/header-profile.js';
-import MainNavigation from '../view/main-navigation.js';
-import MoreBtn from '../view/more-btn.js';
-import SortMenu from '../view/sort-menu.js';
-import MoviePresenter from './movie';
-import MostCommented from '../view/most-commented.js';
-import TopRated from '../view/top-rated.js';
-import TopRatedContainer from '../view/top-rated-container.js';
-import MostCommentedContainer from '../view/most-commented-container.js';
-import { render, RenderPosition, remove } from '../utils/render.js';
-import { updateItem } from '../utils/common.js';
+import FilmsContainer from "../view/films.js";
+import FilmsList from "../view/films-list.js";
+import FilmsListContainer from "../view/films-list-container.js";
+import HeaderProfile from "../view/header-profile.js";
+import MainNavigation from "../view/main-navigation.js";
+import MoreBtn from "../view/more-btn.js";
+import SortMenu from "../view/sort-menu.js";
+import MoviePresenter from "./movie";
+import MostCommented from "../view/most-commented.js";
+import TopRated from "../view/top-rated.js";
+import TopRatedContainer from "../view/top-rated-container.js";
+import MostCommentedContainer from "../view/most-commented-container.js";
+import { render, RenderPosition, remove } from "../utils/render.js";
+import { updateItem } from "../utils/common.js";
 
 const FILM_STEP_COUNT = 5;
 const EXTRA_FILM_STEP_COUNT = 2;
 
 export default class MovieList {
-  constructor(bodyContainer, mainContainer, headerContainer, footerContainer) {
+  constructor(
+    bodyContainer,
+    mainContainer,
+    headerContainer,
+    footerContainer,
+    moviesModel
+  ) {
+    this._moviesModel = moviesModel;
     this._mainContainer = mainContainer;
     this._bodyContainer = bodyContainer;
     this._headerContainer = headerContainer;
@@ -34,7 +41,9 @@ export default class MovieList {
     this._MostCommentedContainerComponent = new MostCommentedContainer();
     this._TopRatedContainerComponent = new TopRatedContainer();
 
-    this._handleMovieChange = this._handleMovieChange.bind(this);
+    // this._handleMovieChange = this._handleMovieChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._removePopup = this._removePopup.bind(this);
   }
 
@@ -54,7 +63,7 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._sortMenuComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
 
     this._renderMovies();
@@ -64,68 +73,88 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._filmsContainerComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._filmsContainerComponent,
       this._filmsListComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._filmsListComponent,
       this._filmsListContainerComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._filmsContainerComponent,
       this._topRatedComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._filmsContainerComponent,
       this._mostCommentedComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._topRatedComponent,
       this._TopRatedContainerComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     render(
       this._mostCommentedComponent,
       this._MostCommentedContainerComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
     this._renderMoreBtn();
 
     this._renderExstraFilms(
       this._moviesRatingSort,
-      this._TopRatedContainerComponent,
+      this._TopRatedContainerComponent
     );
     this._renderExstraFilms(
       this._moviesCommentCountSort,
-      this._MostCommentedContainerComponent,
+      this._MostCommentedContainerComponent
     );
   }
 
-  _handleMovieChange(updatedMovie) {
-    this._movies = updateItem(this._movies, updatedMovie);
-    this._moviePresenter.get(updatedMovie.id).init(updatedMovie);
-    if (this._topRatedPresenter.has(updatedMovie.id)) {
-      this._moviesRatingSort = updateItem(this._moviesRatingSort, updatedMovie);
-      this._topRatedPresenter.get(updatedMovie.id).init(updatedMovie);
-    }
-    if (this._mostCommentedPresenter.has(updatedMovie.id)) {
-      this._moviesCommentCountSort = updateItem(
-        this._moviesCommentCountSort,
-        updatedMovie,
-      );
-      this._mostCommentedPresenter.get(updatedMovie.id).init(updatedMovie);
-    }
+  _getMovies() {
+    return this._moviesModel.getMovies();
+  }
+
+  // _handleMovieChange(updatedMovie) {
+  //   this._movies = updateItem(this._movies, updatedMovie);
+  //   this._moviePresenter.get(updatedMovie.id).init(updatedMovie);
+  //   if (this._topRatedPresenter.has(updatedMovie.id)) {
+  //     this._moviesRatingSort = updateItem(this._moviesRatingSort, updatedMovie);
+  //     this._topRatedPresenter.get(updatedMovie.id).init(updatedMovie);
+  //   }
+  //   if (this._mostCommentedPresenter.has(updatedMovie.id)) {
+  //     this._moviesCommentCountSort = updateItem(
+  //       this._moviesCommentCountSort,
+  //       updatedMovie
+  //     );
+  //     this._mostCommentedPresenter.get(updatedMovie.id).init(updatedMovie);
+  //   }
+  // }
+
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _removePopup() {
-    const filmDetailsPopup = this._bodyContainer.querySelector('.film-details');
+    const filmDetailsPopup = this._bodyContainer.querySelector(".film-details");
 
     if (filmDetailsPopup) {
       filmDetailsPopup.remove();
@@ -138,7 +167,7 @@ export default class MovieList {
     render(
       this._headerContainer,
       headerProfileComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
   }
 
@@ -148,7 +177,7 @@ export default class MovieList {
     render(
       this._mainContainer,
       mainNavigationComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
   }
 
@@ -156,7 +185,7 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._moreBtnComponent,
-      RenderPosition.BEFOREEND,
+      RenderPosition.BEFOREEND
     );
 
     this._moreBtnComponent.setClickHandler(() => {
@@ -172,8 +201,9 @@ export default class MovieList {
       container,
       this._movies,
       this._bodyContainer,
-      this._handleMovieChange,
-      this._removePopup,
+      // this._handleMovieChange,
+      this._handleViewAction,
+      this._removePopup
     );
 
     moviePresenter.init(film);
@@ -203,7 +233,7 @@ export default class MovieList {
     for (let i = 0; i < filmsCount; i++) {
       this._renderFilmCard(
         this._moviesForRender[i],
-        this._filmsListContainerComponent,
+        this._filmsListContainerComponent
       );
     }
     this._moviesForRender.splice(0, filmsCount);
