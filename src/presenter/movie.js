@@ -4,11 +4,19 @@ import { render, RenderPosition, remove, replace } from "../utils/render.js";
 import { UserAction, UpdateType } from "../const.js";
 
 export default class MoviePresenter {
-  constructor(container, movies, bodyContainer, changeData, removePopup) {
+  constructor(
+    container,
+    movies,
+    bodyContainer,
+    changeData,
+    commentsModel,
+    removePopup
+  ) {
     this._container = container;
     this._bodyContainer = bodyContainer;
+    this._commentsModel = commentsModel;
 
-    this._movies = movies;
+    // this._movies = movies;
     this._removePopup = removePopup;
     this._changeData = changeData;
     this._filmComponent = null;
@@ -23,9 +31,13 @@ export default class MoviePresenter {
       this._handleAddToFavoritesClick.bind(this);
   }
 
-  init(film, isPopupRendered) {
+  init(film) {
     this._film = film;
-    this._isPopupRendered = isPopupRendered;
+    this._comments = this._commentsModel.setComments(
+      "MINOR",
+      this._film.comments
+    );
+    console.log(this._film.comments);
 
     const prevFilmComponent = this._filmComponent;
     const prevDetailComponent = this._detailComponent;
@@ -68,6 +80,11 @@ export default class MoviePresenter {
 
     remove(prevFilmComponent);
     remove(prevDetailComponent);
+  }
+
+  destroy() {
+    remove(this._filmComponent);
+    remove(this._detailComponent);
   }
 
   _removeFilmDetails() {
