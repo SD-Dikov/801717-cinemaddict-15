@@ -3,13 +3,11 @@ import MovieList from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
 import MoviesModel from './model/movies.js';
 import FilterModel from './model/filter.js';
-import CommentsModel from './model/comments.js';
 
 const movies = getFilms();
 
 const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
-const commentsModel = new CommentsModel();
 
 moviesModel.setMovies(movies);
 
@@ -25,7 +23,6 @@ const moviePresenter = new MovieList(
   footerStatisticsElement,
   moviesModel,
   filterModel,
-  commentsModel,
 );
 
 const filterPresenter = new FilterPresenter(
