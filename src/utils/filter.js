@@ -1,5 +1,5 @@
-import { FilterType } from "../const";
-import { isWatchlist, isHistory, isFavorites } from "./movies.js";
+import { FilterType } from '../const';
+import { isWatchlist, isHistory, isFavorites } from './movies.js';
 
 export const filter = {
   [FilterType.ALL]: (movies) => movies,

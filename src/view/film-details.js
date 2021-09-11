@@ -1,10 +1,10 @@
-import SmartView from "./smart-view";
-import dayjs from "dayjs";
-import { getHoursMins } from "../utils/common.js";
+import he from 'he';
+import SmartView from './smart-view';
+import dayjs from 'dayjs';
+import { getHoursMins } from '../utils/common.js';
 
-const getFilmDetailsTemplate = (data) => {
+const getFilmDetailsTemplate = (data, comments) => {
   const {
-    comments,
     title,
     alternativeTitle,
     totalRating,
@@ -24,6 +24,8 @@ const getFilmDetailsTemplate = (data) => {
     emojiValue,
   } = data;
 
+  const commentTextValue = data.commentTextValue || '';
+
   const hoursMinsRuntime = getHoursMins(runtime);
   const getGenreMarkup = () =>
     genre.map((item) => `<span class="film-details__genre">${item}</span>`);
@@ -39,10 +41,10 @@ const getFilmDetailsTemplate = (data) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
         <span class="film-details__comment-day">${item.date}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" data-comment='${item.id}'>Delete</button>
       </p>
     </div>
-  </li>`
+  </li>`,
     );
     return commentsMarkup;
   };
@@ -79,20 +81,20 @@ const getFilmDetailsTemplate = (data) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${
-                  writers.length > 1 ? "Writers" : "Writer"
-                }
+  writers.length > 1 ? 'Writers' : 'Writer'
+}
                 </td>
-                <td class="film-details__cell">${writers.join(", ")}</td>
+                <td class="film-details__cell">${writers.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${actors.join(", ")}</td>
+                <td class="film-details__cell">${actors.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
                 <td class="film-details__cell">${dayjs(date).format(
-                  "DD MMMM YYYY"
-                )}
+    'DD MMMM YYYY',
+  )}
                 </td>
               </tr>
               <tr class="film-details__row">
@@ -105,11 +107,11 @@ const getFilmDetailsTemplate = (data) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${
-                  genre.length > 1 ? "Genres" : "Genre"
-                }
+  genre.length > 1 ? 'Genres' : 'Genre'
+}
                 </td>
                 <td class="film-details__cell">
-                  ${getGenreMarkup().join("")}
+                  ${getGenreMarkup().join('')}
               </tr>
             </table>
   
@@ -121,38 +123,40 @@ const getFilmDetailsTemplate = (data) => {
   
         <section class="film-details__controls">
           <button type="button" class="film-details__control-button film-details__control-button--watchlist ${
-            watchlist ? "film-details__control-button--active" : ""
-          }" id="watchlist" name="watchlist">Add to watchlist</button>
+  watchlist ? 'film-details__control-button--active' : ''
+}" id="watchlist" name="watchlist">Add to watchlist</button>
           <button type="button" class="film-details__control-button film-details__control-button--watched ${
-            alreadyWatched ? "film-details__control-button--active" : ""
-          }" id="watched" name="watched">Already watched</button>
+  alreadyWatched ? 'film-details__control-button--active' : ''
+}" id="watched" name="watched">Already watched</button>
           <button type="button" class="film-details__control-button film-details__control-button--favorite ${
-            favorite ? "film-details__control-button--active" : ""
-          }" id="favorite" name="favorite">Add to favorites</button>
+  favorite ? 'film-details__control-button--active' : ''
+}" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
   
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${
-            comments.length
-          }</span></h3>
+  comments.length
+}</span></h3>
   
           <ul class="film-details__comments-list">
-            ${comments.length ? generateCommentsMarkup().join(" ") : ""}
+            ${comments.length ? generateCommentsMarkup().join(' ') : ''}
           </ul>
   
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label">
               ${
-                emojiValue
-                  ? `<img src="./images/emoji/${emojiValue}.png" width="55" height="55" alt=emoji-${emojiValue}></img>`
-                  : ""
-              }
+  emojiValue
+    ? `<img src="./images/emoji/${emojiValue}.png" width="55" height="55" alt=emoji-${emojiValue}></img>`
+    : ''
+}
             </div>
   
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(
+    commentTextValue,
+  )}</textarea>
             </label>
   
             <div class="film-details__emoji-list">
@@ -184,9 +188,10 @@ const getFilmDetailsTemplate = (data) => {
 };
 
 export default class FilmDetails extends SmartView {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._data = FilmDetails.parseFilmToData(film);
+    this._comments = comments;
     this._closeBtnClickHandler = this._closeBtnClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._alreadyWatchedClickHandler =
@@ -194,12 +199,17 @@ export default class FilmDetails extends SmartView {
     this._addToFavoritesClickHandler =
       this._addToFavoritesClickHandler.bind(this);
     this._emojiRadioHendler = this._emojiRadioHendler.bind(this);
+    this._commentInputHendler = this._commentInputHendler.bind(this);
+    this._deleteCommentClickHandler =
+      this._deleteCommentClickHandler.bind(this);
+
+    this._addCommentKeyHendler = this._addCommentKeyHendler.bind(this);
 
     this._setInnerHandlers();
   }
 
   getTemplate() {
-    return getFilmDetailsTemplate(this._data);
+    return getFilmDetailsTemplate(this._data, this._comments);
   }
 
   restoreHandlers() {
@@ -208,25 +218,37 @@ export default class FilmDetails extends SmartView {
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
     this.setAddToFavoritesClickHandler(this._callback.addToFavoritesClick);
+    this.setDeleteCommentHandler(this._callback.deleteCommentClickHandler);
   }
 
   _setInnerHandlers() {
     this.getElement()
-      .querySelector(".film-details__emoji-list")
-      .addEventListener("input", this._emojiRadioHendler);
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('input', this._emojiRadioHendler);
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('input', this._commentInputHendler);
   }
 
   _emojiRadioHendler(evt) {
     evt.preventDefault();
-    const posTop = this._element.scrollTop;
+    const posTop = this.getElement().scrollTop;
     const emojiValue = evt.target.value;
     this.updateData({
       emojiValue,
     });
     document
       .querySelector(`#emoji-${emojiValue}`)
-      .setAttribute("checked", "true");
-    this._element.scrollTop = posTop;
+      .setAttribute('checked', 'true');
+    this.getElement().scrollTop = posTop;
+  }
+
+  _commentInputHendler(evt) {
+    evt.preventDefault();
+    const posTop = this.getElement().scrollTop;
+    const comentInputValue = evt.target.value;
+    this.updateData({ commentTextValue: comentInputValue }, true);
+    this.getElement().scrollTop = posTop;
   }
 
   _closeBtnClickHandler(evt) {
@@ -249,32 +271,57 @@ export default class FilmDetails extends SmartView {
     this._callback.addToFavoritesClick(evt);
   }
 
+  _deleteCommentClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteCommentClick(evt);
+  }
+
+  _addCommentKeyHendler(evt) {
+    this._callback.addCommentKey(evt, this._data);
+  }
+
   setCloseBtnClickHandler(callback) {
     this._callback.closeBtnClick = callback;
     this.getElement()
-      .querySelector(".film-details__close-btn")
-      .addEventListener("click", this._closeBtnClickHandler);
+      .querySelector('.film-details__close-btn')
+      .addEventListener('click', this._closeBtnClickHandler);
   }
 
   setWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
     this.getElement()
-      .querySelector(".film-details__control-button--watchlist")
-      .addEventListener("click", this._watchlistClickHandler);
+      .querySelector('.film-details__control-button--watchlist')
+      .addEventListener('click', this._watchlistClickHandler);
   }
 
   setAlreadyWatchedClickHandler(callback) {
     this._callback.alreadyWatchedClick = callback;
     this.getElement()
-      .querySelector(".film-details__control-button--watched")
-      .addEventListener("click", this._alreadyWatchedClickHandler);
+      .querySelector('.film-details__control-button--watched')
+      .addEventListener('click', this._alreadyWatchedClickHandler);
   }
 
   setAddToFavoritesClickHandler(callback) {
     this._callback.addToFavoritesClick = callback;
     this.getElement()
-      .querySelector(".film-details__control-button--favorite")
-      .addEventListener("click", this._addToFavoritesClickHandler);
+      .querySelector('.film-details__control-button--favorite')
+      .addEventListener('click', this._addToFavoritesClickHandler);
+  }
+
+  setDeleteCommentHandler(callback) {
+    this._callback.deleteCommentClick = callback;
+    this.getElement()
+      .querySelector('.film-details__comments-list')
+      .addEventListener('click', this._deleteCommentClickHandler);
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addCommentKey = callback;
+    document.addEventListener('keydown', this._addCommentKeyHendler);
+  }
+
+  removeCommentHandlerEvent() {
+    document.removeEventListener('keydown', this._addCommentKeyHendler);
   }
 
   static parseFilmToData(film) {
