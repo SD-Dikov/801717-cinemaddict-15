@@ -1,17 +1,6 @@
 import dayjs from 'dayjs';
-const FILM_MOCK_COUNT = 6;
-
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-const getTenthsRandomInteger = (a = 0, b = 1) => {
-  const num = Math.random() * (a - b) + b;
-  return +num.toFixed(1);
-};
+import { getRandomInteger, getTenthsRandomInteger } from '../utils/common.js';
+const FILM_MOCK_COUNT = 24;
 
 const generateTitle = () => {
   const titleList = [
@@ -846,7 +835,7 @@ const generateComment = (index) => ({
 
 const generateComments = () => {
   const commentsArr = [];
-  const count = 50;
+  const count = FILM_MOCK_COUNT * 5;
   for (let i = 0; i < count; i++) {
     commentsArr.push(generateComment(i));
   }
@@ -861,6 +850,7 @@ const generateCommentsList = () => {
   for (let i = 0; i < randomCount; i++) {
     const randomIndex = getRandomInteger(0, comments.length - 1);
     commentsList.push(comments[randomIndex]);
+    comments.splice(randomIndex, 1);
   }
   return commentsList;
 };
