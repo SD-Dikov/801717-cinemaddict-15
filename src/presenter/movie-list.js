@@ -376,6 +376,7 @@ export default class MovieList {
         if (evt.key === 'Escape' || evt.key === 'Esc') {
           this._removeFilmDetails();
           this._openedMovieId = null;
+
           return;
         }
         if (evt.ctrlKey && evt.keyCode === 13) {
