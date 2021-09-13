@@ -373,6 +373,11 @@ export default class MovieList {
       });
 
       this._filmDetailsComponent.setAddCommentHandler((evt, data) => {
+        if (evt.key === 'Escape' || evt.key === 'Esc') {
+          this._removeFilmDetails();
+          this._openedMovieId = null;
+          return;
+        }
         if (evt.ctrlKey && evt.keyCode === 13) {
           this._posTop = this._filmDetailsComponent.getElement().scrollTop;
           if (!data.commentTextValue || !data.emojiValue) {
