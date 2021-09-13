@@ -1,15 +1,18 @@
-import { getFilms } from './mock/films-mock.js';
+// import { getFilms } from "./mock/films-mock.js";
 import MovieList from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
 import MoviesModel from './model/movies.js';
 import FilterModel from './model/filter.js';
+import Api from './api.js';
+import { UpdateType } from './const.js';
 
-const movies = getFilms();
+const AUTHORIZATION = 'Basic 801717cinemaDD15';
+const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict/';
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
-
-moviesModel.setMovies(movies);
 
 const body = document.querySelector('body');
 const siteMainElement = document.querySelector('.main');
@@ -23,6 +26,7 @@ const moviePresenter = new MovieList(
   footerStatisticsElement,
   moviesModel,
   filterModel,
+  api,
 );
 
 const filterPresenter = new FilterPresenter(
@@ -33,3 +37,12 @@ const filterPresenter = new FilterPresenter(
 
 filterPresenter.init();
 moviePresenter.init();
+
+api
+  .getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(UpdateType.INIT, movies);
+  })
+  .catch(() => {
+    moviesModel.setMovies(UpdateType.INIT, []);
+  });

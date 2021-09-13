@@ -7,8 +7,10 @@ export default class Movies extends AbstractObserver {
     this._comments = [];
   }
 
-  setMovies(movies) {
+  setMovies(updateType, movies) {
     this._movies = movies.slice();
+
+    this._notify(updateType);
   }
 
   getMovies() {
@@ -16,7 +18,9 @@ export default class Movies extends AbstractObserver {
   }
 
   updateMovie(updateType, update) {
-    const index = this._movies.findIndex((movie) => movie.id === update.id);
+    const index = this._movies.findIndex(
+      (movie) => Number(movie.id) === Number(update.id),
+    );
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting movie');
@@ -38,35 +42,92 @@ export default class Movies extends AbstractObserver {
     return this._comments;
   }
 
-  addComment(updateType, update, currentMovie) {
-    this._comments = [update, ...this._comments];
+  addComment(updateType, update) {
+    this._comments = update.comments;
 
-    this.updateMovie(
-      updateType,
-      Object.assign({}, currentMovie, {
-        comments: this._comments,
-      }),
-    );
+    this._notify(updateType);
   }
 
-  deleteComment(updateType, update, currentMovie) {
-    const index = this._comments.findIndex(
-      (comment) => Number(comment.id) === Number(update),
-    );
+  deleteComment(updateType) {
+    this._notify(updateType);
+  }
 
-    if (index === -1) {
-      throw new Error('Can\'t delete unexisting comment');
-    }
-    this._comments = [
-      ...this._comments.slice(0, index),
-      ...this._comments.slice(index + 1),
-    ];
+  static adaptToClient(movie) {
+    const adaptedMovie = Object.assign({}, movie, {
+      id: movie.id,
+      comments: movie.comments,
+      title: movie['film_info'].title,
+      alternativeTitle: movie['film_info']['alternative_title'],
+      totalRating: movie['film_info']['total_rating'],
+      poster: movie['film_info'].poster,
+      ageRating: movie['film_info']['age_rating'],
+      director: movie['film_info'].director,
+      writers: movie['film_info'].writers,
+      actors: movie['film_info'].actors,
+      date: movie['film_info']['release'].date,
+      releaseCountry: movie['film_info']['release']['release_country'],
+      runtime: movie['film_info'].runtime,
+      genre: movie['film_info'].genre,
+      description: movie['film_info'].description,
+      watchlist: movie['user_details'].watchlist,
+      alreadyWatched: movie['user_details']['already_watched'],
+      watchingDate: movie['user_details']['watching_date'],
+      favorite: movie['user_details'].favorite,
+    });
 
-    this.updateMovie(
-      updateType,
-      Object.assign({}, currentMovie, {
-        comments: this._comments,
-      }),
-    );
+    delete adaptedMovie['film_info'];
+    delete adaptedMovie['user_details'];
+
+    return adaptedMovie;
+  }
+
+  static adaptToServer(movie) {
+    const adaptedMovie = Object.assign({}, movie, {
+      id: movie.id,
+      comments: movie.comments,
+      'film_info': {
+        title: movie.title,
+        'alternative_title': movie.alternativeTitle,
+        'total_rating': movie.totalRating,
+        poster: movie.poster,
+        'age_rating': movie.ageRating,
+        director: movie.director,
+        writers: movie.writers,
+        actors: movie.actors,
+        release: {
+          date: movie.date,
+          'release_country': movie.releaseCountry,
+        },
+        runtime: movie.runtime,
+        genre: movie.genre,
+        description: movie.description,
+      },
+      'user_details': {
+        watchlist: movie.watchlist,
+        'already_watched': movie.alreadyWatched,
+        'watching_date': movie.watchingDate,
+        favorite: movie.favorite,
+      },
+    });
+
+    delete adaptedMovie.title;
+    delete adaptedMovie.alternativeTitle;
+    delete adaptedMovie.totalRating;
+    delete adaptedMovie.poster;
+    delete adaptedMovie.ageRating;
+    delete adaptedMovie.director;
+    delete adaptedMovie.writers;
+    delete adaptedMovie.actors;
+    delete adaptedMovie.date;
+    delete adaptedMovie.releaseCountry;
+    delete adaptedMovie.runtime;
+    delete adaptedMovie.genre;
+    delete adaptedMovie.description;
+    delete adaptedMovie.watchlist;
+    delete adaptedMovie.alreadyWatched;
+    delete adaptedMovie.watchingDate;
+    delete adaptedMovie.favorite;
+
+    return adaptedMovie;
   }
 }

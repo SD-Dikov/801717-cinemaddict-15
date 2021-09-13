@@ -3,6 +3,8 @@ import SmartView from './smart-view';
 import dayjs from 'dayjs';
 import { getHoursMins } from '../utils/common.js';
 
+const SHAKE_ANIMATION_TIMEOUT = 1000;
+
 const getFilmDetailsTemplate = (data, comments) => {
   const {
     title,
@@ -22,6 +24,9 @@ const getFilmDetailsTemplate = (data, comments) => {
     alreadyWatched,
     favorite,
     emojiValue,
+    isDeleting,
+    isAdding,
+    deletingId,
   } = data;
 
   const commentTextValue = data.commentTextValue || '';
@@ -32,16 +37,22 @@ const getFilmDetailsTemplate = (data, comments) => {
 
   const generateCommentsMarkup = () => {
     const commentsMarkup = comments.map(
-      (item) => `<li class="film-details__comment">
+      (item) => `<li class="film-details__comment" data-comment="${item.id}">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
+      <img src="./images/emoji/${
+  item.emotion
+}.png" width="55" height="55" alt="emoji-${item.emotion}">
     </span>
     <div>
       <p class="film-details__comment-text">${item.comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
         <span class="film-details__comment-day">${item.date}</span>
-        <button class="film-details__comment-delete" data-comment='${item.id}'>Delete</button>
+        <button class="film-details__comment-delete" data-comment='${
+  item.id
+}' ${isDeleting ? 'disabled=\'disabled\' style=\'opacity: 0.5;\'' : ''}>
+        ${isDeleting && deletingId === item.id ? 'Deleting...' : 'Delete'}
+        </button>
       </p>
     </div>
   </li>`,
@@ -154,28 +165,36 @@ const getFilmDetailsTemplate = (data, comments) => {
             </div>
   
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(
-    commentTextValue,
-  )}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${
+  isAdding ? 'disabled=\'disabled\' style=\'opacity: 0.5;\'' : ''
+}>${he.encode(commentTextValue)}</textarea>
             </label>
   
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${
+  isAdding ? 'disabled=\'disabled\'' : ''
+}>
               <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${
+  isAdding ? 'disabled=\'disabled\'' : ''
+}>
               <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${
+  isAdding ? 'disabled=\'disabled\'' : ''
+}>
               <label class="film-details__emoji-label" for="emoji-puke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${
+  isAdding ? 'disabled=\'disabled\'' : ''
+}>
               <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
@@ -218,7 +237,7 @@ export default class FilmDetails extends SmartView {
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
     this.setAddToFavoritesClickHandler(this._callback.addToFavoritesClick);
-    this.setDeleteCommentHandler(this._callback.deleteCommentClickHandler);
+    this.setDeleteCommentHandler(this._callback.deleteCommentClick);
   }
 
   _setInnerHandlers() {
@@ -324,9 +343,41 @@ export default class FilmDetails extends SmartView {
     document.removeEventListener('keydown', this._addCommentKeyHendler);
   }
 
+  shakeAdd(callback) {
+    const posTop = this.getElement().scrollTop;
+    const element = document.querySelector('.film-details__new-comment');
+    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      element.style.animation = '';
+      if (callback) {
+        callback();
+      }
+      this.getElement().scrollTop = posTop;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeDelete(callback, commentId) {
+    const posTop = this.getElement().scrollTop;
+    const element = document.querySelector(
+      `.film-details__comment[data-comment="${commentId}"]`,
+    );
+    element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      element.style.animation = '';
+      callback();
+      this.getElement().scrollTop = posTop;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   static parseFilmToData(film) {
-    return Object.assign({}, film, {
+    film = Object.assign({}, film, {
       emojiValue: null,
     });
+
+    delete film.isDeleting;
+    delete film.isAdding;
+    delete film.deletingId;
+
+    return film;
   }
 }
