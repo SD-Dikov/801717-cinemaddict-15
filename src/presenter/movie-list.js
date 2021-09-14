@@ -77,11 +77,6 @@ export default class MovieList {
 
   init() {
     render(
-      this._mainContainer,
-      this._filmsContainerComponent,
-      RenderPosition.BEFOREEND,
-    );
-    render(
       this._filmsContainerComponent,
       this._filmsListComponent,
       RenderPosition.BEFOREEND,
@@ -288,7 +283,7 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._sortMenuComponent,
-      RenderPosition.AFTERBEGIN,
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -523,6 +518,11 @@ export default class MovieList {
     }
 
     this._renderSort();
+    render(
+      this._mainContainer,
+      this._filmsContainerComponent,
+      RenderPosition.BEFOREEND,
+    );
 
     this._renderMovies(
       movies.slice(0, Math.min(moviesCount, this._renderedMoviesCount)),
