@@ -1,4 +1,3 @@
-// import { getFilms } from "./mock/films-mock.js";
 import MovieList from './presenter/movie-list.js';
 import FilterPresenter from './presenter/filter.js';
 import MoviesModel from './model/movies.js';

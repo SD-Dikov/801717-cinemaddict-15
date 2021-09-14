@@ -15,7 +15,14 @@ import FilmDetails from '../view/film-details.js';
 import LoadingView from '../view/loading.js';
 import { filter } from '../utils/filter.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
-import { UpdateType, UserAction, FilterType, State } from '../const.js';
+import { sortByDate, sortByRating } from '../utils/movies.js';
+import {
+  UpdateType,
+  UserAction,
+  FilterType,
+  State,
+  SortType
+} from '../const.js';
 
 const FILM_STEP_COUNT = 5;
 const EXTRA_FILM_STEP_COUNT = 2;
@@ -37,17 +44,23 @@ export default class MovieList {
     this._headerContainer = headerContainer;
     this._footerContainer = footerStatisticsContainer;
     this._api = api;
+    this._renderedMoviesCount = FILM_STEP_COUNT;
+    this._moviePresenter = new Map();
+    this._mostCommentedPresenter = new Map();
+    this._topRatedPresenter = new Map();
+    this._filterType = FilterType.ALL;
+    this._currentSortType = SortType.DEFAULT;
 
     this._filmsListComponent = new FilmsList();
     this._filmsContainerComponent = new FilmsContainer();
     this._filmsListContainerComponent = new FilmsListContainer();
-    this._sortMenuComponent = new SortMenu();
     this._mostCommentedComponent = new MostCommented();
     this._topRatedComponent = new TopRated();
     this._mostCommentedContainerComponent = new MostCommentedContainer();
     this._topRatedContainerComponent = new TopRatedContainer();
     this._loadingComponent = new LoadingView();
 
+    this._sortMenuComponent = null;
     this._openedMovieId = null;
     this._isLoading = true;
 
@@ -56,28 +69,13 @@ export default class MovieList {
     this._handleMoreBtnClick = this._handleMoreBtnClick.bind(this);
     this._renderFilmDetails = this._renderFilmDetails.bind(this);
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._renderedMoviesCount = FILM_STEP_COUNT;
-    this._moviePresenter = new Map();
-    this._mostCommentedPresenter = new Map();
-    this._topRatedPresenter = new Map();
-    this._filterType = FilterType.ALL;
-
-    render(
-      this._mainContainer,
-      this._sortMenuComponent,
-      RenderPosition.BEFOREEND,
-    );
-    render(
-      this._mainContainer,
-      this._filmsContainerComponent,
-      RenderPosition.BEFOREEND,
-    );
     render(
       this._filmsContainerComponent,
       this._filmsListComponent,
@@ -126,6 +124,13 @@ export default class MovieList {
     const movies = this._moviesModel.getMovies();
     const filtredMovie = filter[this._filterType](movies);
 
+    switch (this._currentSortType) {
+      case SortType.DATE:
+        return filtredMovie.sort(sortByDate);
+      case SortType.RATING:
+        return filtredMovie.sort(sortByRating);
+    }
+
     return filtredMovie;
   }
 
@@ -137,13 +142,6 @@ export default class MovieList {
     if (!this._openedMovieId) {
       return;
     }
-
-    const resetFormState = () => {
-      this._filmDetailsComponent.updateData({
-        isAdding: false,
-        isDeleting: false,
-      });
-    };
 
     switch (state) {
       case State.ADDING:
@@ -158,10 +156,10 @@ export default class MovieList {
         });
         break;
       case State.ABORTING_DELETING:
-        this._filmDetailsComponent.shakeDelete(resetFormState, update);
+        this._filmDetailsComponent.shakeDelete(update);
         break;
       case State.ABORTING_ADDING:
-        this._filmDetailsComponent.shakeAdd(resetFormState);
+        this._filmDetailsComponent.shakeAdd({ resetState: true });
         break;
     }
   }
@@ -216,7 +214,10 @@ export default class MovieList {
         this._renderMoviesList();
         break;
       case UpdateType.MAJOR:
-        this._clearMovies({ resetRenderedMoviesCount: true });
+        this._clearMovies({
+          resetRenderedMoviesCount: true,
+          resetSortType: true,
+        });
         this._renderMoviesList();
         break;
       case UpdateType.INIT:
@@ -256,6 +257,34 @@ export default class MovieList {
     if (this._renderedMoviesCount >= moviesCount) {
       remove(this._moreBtnComponent);
     }
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    this._clearMovies({ resetRenderedMoviesCount: true });
+    this._renderMoviesList();
+  }
+
+  _renderSort() {
+    if (this._sortMenuComponent !== null) {
+      this._sortMenuComponent = null;
+    }
+
+    this._sortMenuComponent = new SortMenu(this._currentSortType);
+
+    this._sortMenuComponent.setSortTypeChangeHandler(
+      this._handleSortTypeChange,
+    );
+
+    render(
+      this._mainContainer,
+      this._sortMenuComponent,
+      RenderPosition.BEFOREEND,
+    );
   }
 
   _renderMoreBtn() {
@@ -479,6 +508,7 @@ export default class MovieList {
     this._moviesRatingSort = allMovies
       .slice()
       .sort((prev, next) => next.totalRating - prev.totalRating);
+
     this._moviesCommentCountSort = allMovies
       .slice()
       .sort((prev, next) => next.comments.length - prev.comments.length);
@@ -486,6 +516,13 @@ export default class MovieList {
     if (moviesCount === 0) {
       this._renderNoMovies();
     }
+
+    this._renderSort();
+    render(
+      this._mainContainer,
+      this._filmsContainerComponent,
+      RenderPosition.BEFOREEND,
+    );
 
     this._renderMovies(
       movies.slice(0, Math.min(moviesCount, this._renderedMoviesCount)),
@@ -508,7 +545,10 @@ export default class MovieList {
     }
   }
 
-  _clearMovies({ resetRenderedMoviesCount = false } = {}) {
+  _clearMovies({
+    resetRenderedMoviesCount = false,
+    resetSortType = false,
+  } = {}) {
     const moviesCount = this._getMovies().length;
 
     this._moviePresenter.forEach((presenter) => presenter.destroy());
@@ -521,6 +561,7 @@ export default class MovieList {
     remove(this._moreBtnComponent);
     remove(this._headerProfileComponent);
     remove(this._footerStatisticsComponent);
+    remove(this._sortMenuComponent);
 
     if (this._noMoviesComponent) {
       remove(this._noMoviesComponent);
@@ -537,6 +578,10 @@ export default class MovieList {
         moviesCount,
         this._renderedMoviesCount,
       );
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
     }
   }
 }
