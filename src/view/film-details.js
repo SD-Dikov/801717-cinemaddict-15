@@ -32,7 +32,7 @@ const getFilmDetailsTemplate = (data, comments) => {
   const commentTextValue = data.commentTextValue || '';
 
   const hoursMinsRuntime = getHoursMins(runtime);
-  const getGenreMarkup = () =>
+  const generateGenreMarkup = () =>
     genre.map((item) => `<span class="film-details__genre">${item}</span>`);
 
   const generateCommentsMarkup = () => {
@@ -47,7 +47,9 @@ const getFilmDetailsTemplate = (data, comments) => {
       <p class="film-details__comment-text">${item.comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
-        <span class="film-details__comment-day">${item.date}</span>
+        <span class="film-details__comment-day">${dayjs(item.date).format(
+    'YYYY/MMMM/DD/ hh:mm',
+  )}</span>
         <button class="film-details__comment-delete" data-comment='${
   item.id
 }' ${isDeleting ? 'disabled=\'disabled\' style=\'opacity: 0.5;\'' : ''}>
@@ -122,7 +124,7 @@ const getFilmDetailsTemplate = (data, comments) => {
 }
                 </td>
                 <td class="film-details__cell">
-                  ${getGenreMarkup().join('')}
+                  ${generateGenreMarkup().join('')}
               </tr>
             </table>
   
@@ -221,8 +223,8 @@ export default class FilmDetails extends SmartView {
     this._commentInputHendler = this._commentInputHendler.bind(this);
     this._deleteCommentClickHandler =
       this._deleteCommentClickHandler.bind(this);
-
     this._addCommentKeyHendler = this._addCommentKeyHendler.bind(this);
+    this._resetFormState = this._resetFormState.bind(this);
 
     this._setInnerHandlers();
   }
@@ -268,6 +270,13 @@ export default class FilmDetails extends SmartView {
     const comentInputValue = evt.target.value;
     this.updateData({ commentTextValue: comentInputValue }, true);
     this.getElement().scrollTop = posTop;
+  }
+
+  _resetFormState() {
+    this.updateData({
+      isAdding: false,
+      isDeleting: false,
+    });
   }
 
   _closeBtnClickHandler(evt) {
@@ -343,20 +352,20 @@ export default class FilmDetails extends SmartView {
     document.removeEventListener('keydown', this._addCommentKeyHendler);
   }
 
-  shakeAdd(callback) {
+  shakeAdd({ resetState = false } = {}) {
     const posTop = this.getElement().scrollTop;
     const element = document.querySelector('.film-details__new-comment');
     element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       element.style.animation = '';
-      if (callback) {
-        callback();
+      if (resetState) {
+        this._resetFormState();
       }
       this.getElement().scrollTop = posTop;
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
-  shakeDelete(callback, commentId) {
+  shakeDelete(commentId) {
     const posTop = this.getElement().scrollTop;
     const element = document.querySelector(
       `.film-details__comment[data-comment="${commentId}"]`,
@@ -364,7 +373,7 @@ export default class FilmDetails extends SmartView {
     element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     setTimeout(() => {
       element.style.animation = '';
-      callback();
+      this._resetFormState();
       this.getElement().scrollTop = posTop;
     }, SHAKE_ANIMATION_TIMEOUT);
   }

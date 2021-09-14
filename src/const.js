@@ -26,4 +26,10 @@ const State = {
   ABORTING_ADDING: 'ABORTING_ADDING',
 };
 
-export { UserAction, UpdateType, FilterType, State };
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
+export { UserAction, UpdateType, FilterType, State, SortType };
