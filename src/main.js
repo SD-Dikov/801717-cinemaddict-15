@@ -35,6 +35,7 @@ const filterPresenter = new FilterPresenter(
 );
 
 filterPresenter.init();
+
 moviePresenter.init();
 
 api
