@@ -4,10 +4,12 @@ import { filter } from '../utils/filter.js';
 import { FilterType, UpdateType } from '../const.js';
 
 export default class FilterPresenter {
-  constructor(filterContainer, filterModel, moviesModel) {
+  constructor(filterContainer, filterModel, moviesModel, handleSiteMenuClick) {
     this._filterContainer = filterContainer;
     this._filterModel = filterModel;
     this._moviesModel = moviesModel;
+
+    this._handleSiteMenuClick = handleSiteMenuClick;
 
     this._filterComponent = null;
 
@@ -28,6 +30,9 @@ export default class FilterPresenter {
     );
     this._filterComponent.setFilterTypeChangeHandler(
       this._handleFilterTypeChange,
+    );
+    this._filterComponent.setSiteMenuItemChangeHandler(
+      this._handleSiteMenuClick,
     );
 
     if (prevFilterComponent === null) {

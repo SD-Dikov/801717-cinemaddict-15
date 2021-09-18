@@ -70,9 +70,6 @@ export default class MovieList {
     this._renderFilmDetails = this._renderFilmDetails.bind(this);
     this._handleCloseBtnClick = this._handleCloseBtnClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -86,31 +83,18 @@ export default class MovieList {
       this._filmsListContainerComponent,
       RenderPosition.BEFOREEND,
     );
-    render(
-      this._filmsContainerComponent,
-      this._topRatedComponent,
-      RenderPosition.BEFOREEND,
-    );
-    render(
-      this._filmsContainerComponent,
-      this._mostCommentedComponent,
-      RenderPosition.BEFOREEND,
-    );
-    render(
-      this._topRatedComponent,
-      this._topRatedContainerComponent,
-      RenderPosition.BEFOREEND,
-    );
-    render(
-      this._mostCommentedComponent,
-      this._mostCommentedContainerComponent,
-      RenderPosition.BEFOREEND,
-    );
 
+    this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
     this._renderMoviesList();
   }
 
   destroy() {
+    this._clearMovies({
+      resetRenderedMoviesCount: true,
+      resetSortType: true,
+    });
+
     remove(this._filmsListComponent);
     remove(this._mostCommentedContainerComponent);
     remove(this._topRatedContainerComponent);
@@ -122,6 +106,9 @@ export default class MovieList {
   _getMovies() {
     this._filterType = this._filterModel.getFilter();
     const movies = this._moviesModel.getMovies();
+    if (!this._filterType) {
+      this._filterType = 'all';
+    }
     const filtredMovie = filter[this._filterType](movies);
 
     switch (this._currentSortType) {
@@ -232,7 +219,6 @@ export default class MovieList {
       this._headerProfileComponent = null;
     }
     this._headerProfileComponent = new HeaderProfile(films);
-
     render(
       this._headerContainer,
       this._headerProfileComponent,
@@ -518,9 +504,30 @@ export default class MovieList {
     }
 
     this._renderSort();
+
     render(
       this._mainContainer,
       this._filmsContainerComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._filmsContainerComponent,
+      this._topRatedComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._filmsContainerComponent,
+      this._mostCommentedComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._topRatedComponent,
+      this._topRatedContainerComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._mostCommentedComponent,
+      this._mostCommentedContainerComponent,
       RenderPosition.BEFOREEND,
     );
 
@@ -562,6 +569,8 @@ export default class MovieList {
     remove(this._headerProfileComponent);
     remove(this._footerStatisticsComponent);
     remove(this._sortMenuComponent);
+    remove(this._mostCommentedComponent);
+    remove(this._topRatedComponent);
 
     if (this._noMoviesComponent) {
       remove(this._noMoviesComponent);

@@ -32,4 +32,9 @@ const SortType = {
   RATING: 'rating',
 };
 
-export { UserAction, UpdateType, FilterType, State, SortType };
+const MenuItem = {
+  MOVIES: 'movies',
+  STATISTICS: 'statistics',
+};
+
+export { UserAction, UpdateType, FilterType, State, SortType, MenuItem };

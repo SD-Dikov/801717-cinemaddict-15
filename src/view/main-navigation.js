@@ -3,7 +3,7 @@ import AbstractView from './abstract-view';
 const generateFilterItemTemplate = (filter, currentFilterType) => {
   const { type, name, count } = filter;
 
-  return `<a href="#${type}" data-type="${type}" class="main-navigation__item ${
+  return `<a href="#${type}" data-type="${type}" data-navigation='movies' class="main-navigation__item ${
     type === currentFilterType ? 'main-navigation__item--active' : ''
   }">
   ${name} 
@@ -20,7 +20,7 @@ const generateMainNavigationTemplate = (filterItems, currentFilterType) => {
     <div class="main-navigation__items">
       ${filterItemsTemplate}
     </div>
-    <a href="#stats" class="main-navigation__additional">Stats</a>
+    <a href="#stats" class="main-navigation__additional" data-navigation='statistics'>Stats</a>
   </nav>`;
 };
 
@@ -30,6 +30,8 @@ export default class MainNavigation extends AbstractView {
     this._filters = filters;
     this._currentFilter = currentFilterType;
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._siteMenuItemChangeHandler =
+      this._siteMenuItemChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -41,8 +43,21 @@ export default class MainNavigation extends AbstractView {
     this._callback.filterTypeChange(evt.target.dataset.type);
   }
 
+  _siteMenuItemChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.siteMenuItemChange(evt.target.dataset.navigation);
+  }
+
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().addEventListener('click', this._filterTypeChangeHandler);
+  }
+
+  setSiteMenuItemChangeHandler(callback) {
+    this._callback.siteMenuItemChange = callback;
+    this.getElement().addEventListener(
+      'click',
+      this._siteMenuItemChangeHandler,
+    );
   }
 }
