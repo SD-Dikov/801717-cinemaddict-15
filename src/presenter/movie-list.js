@@ -1,28 +1,28 @@
-import FilmsContainer from "../view/films.js";
-import FilmsList from "../view/films-list.js";
-import FilmsListContainer from "../view/films-list-container.js";
-import HeaderProfile from "../view/header-profile.js";
-import MoreBtn from "../view/more-btn.js";
-import SortMenu from "../view/sort-menu.js";
-import MoviePresenter from "./movie";
-import MostCommented from "../view/most-commented.js";
-import TopRated from "../view/top-rated.js";
-import TopRatedContainer from "../view/top-rated-container.js";
-import MostCommentedContainer from "../view/most-commented-container.js";
-import FooterStat from "../view/footer-stat.js";
-import NoFilmsView from "../view/no-films.js";
-import FilmDetails from "../view/film-details.js";
-import LoadingView from "../view/loading.js";
-import { filter } from "../utils/filter.js";
-import { render, RenderPosition, remove } from "../utils/render.js";
-import { sortByDate, sortByRating } from "../utils/movies.js";
+import FilmsContainer from '../view/films.js';
+import FilmsList from '../view/films-list.js';
+import FilmsListContainer from '../view/films-list-container.js';
+import HeaderProfile from '../view/header-profile.js';
+import MoreBtn from '../view/more-btn.js';
+import SortMenu from '../view/sort-menu.js';
+import MoviePresenter from './movie';
+import MostCommented from '../view/most-commented.js';
+import TopRated from '../view/top-rated.js';
+import TopRatedContainer from '../view/top-rated-container.js';
+import MostCommentedContainer from '../view/most-commented-container.js';
+import FooterStat from '../view/footer-stat.js';
+import NoFilmsView from '../view/no-films.js';
+import FilmDetails from '../view/film-details.js';
+import LoadingView from '../view/loading.js';
+import { filter } from '../utils/filter.js';
+import { render, RenderPosition, remove } from '../utils/render.js';
+import { sortByDate, sortByRating } from '../utils/movies.js';
 import {
   UpdateType,
   UserAction,
   FilterType,
   State,
-  SortType,
-} from "../const.js";
+  SortType
+} from '../const.js';
 
 const FILM_STEP_COUNT = 5;
 const EXTRA_FILM_STEP_COUNT = 2;
@@ -35,7 +35,7 @@ export default class MovieList {
     footerStatisticsContainer,
     moviesModel,
     filterModel,
-    api
+    api,
   ) {
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
@@ -76,32 +76,12 @@ export default class MovieList {
     render(
       this._filmsContainerComponent,
       this._filmsListComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
     render(
       this._filmsListComponent,
       this._filmsListContainerComponent,
-      RenderPosition.BEFOREEND
-    );
-    render(
-      this._filmsContainerComponent,
-      this._topRatedComponent,
-      RenderPosition.BEFOREEND
-    );
-    render(
-      this._filmsContainerComponent,
-      this._mostCommentedComponent,
-      RenderPosition.BEFOREEND
-    );
-    render(
-      this._topRatedComponent,
-      this._topRatedContainerComponent,
-      RenderPosition.BEFOREEND
-    );
-    render(
-      this._mostCommentedComponent,
-      this._mostCommentedContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
 
     this._moviesModel.addObserver(this._handleModelEvent);
@@ -127,7 +107,7 @@ export default class MovieList {
     this._filterType = this._filterModel.getFilter();
     const movies = this._moviesModel.getMovies();
     if (!this._filterType) {
-      this._filterType = "all";
+      this._filterType = 'all';
     }
     const filtredMovie = filter[this._filterType](movies);
 
@@ -242,7 +222,7 @@ export default class MovieList {
     render(
       this._headerContainer,
       this._headerProfileComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -250,11 +230,11 @@ export default class MovieList {
     const moviesCount = this._getMovies().length;
     const newRenderedMovieCount = Math.min(
       moviesCount,
-      this._renderedMoviesCount + FILM_STEP_COUNT
+      this._renderedMoviesCount + FILM_STEP_COUNT,
     );
     const movies = this._getMovies().slice(
       this._renderedMoviesCount,
-      newRenderedMovieCount
+      newRenderedMovieCount,
     );
 
     this._renderMovies(movies);
@@ -283,13 +263,13 @@ export default class MovieList {
     this._sortMenuComponent = new SortMenu(this._currentSortType);
 
     this._sortMenuComponent.setSortTypeChangeHandler(
-      this._handleSortTypeChange
+      this._handleSortTypeChange,
     );
 
     render(
       this._mainContainer,
       this._sortMenuComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -304,7 +284,7 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._moreBtnComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -313,7 +293,7 @@ export default class MovieList {
     render(
       this._footerContainer,
       this._footerStatisticsComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
     );
   }
 
@@ -321,7 +301,7 @@ export default class MovieList {
     const moviePresenter = new MoviePresenter(
       container,
       this._handleViewAction,
-      this._renderFilmDetails
+      this._renderFilmDetails,
     );
 
     moviePresenter.init(film);
@@ -354,12 +334,12 @@ export default class MovieList {
 
       this._filmDetailsComponent = new FilmDetails(
         film,
-        this._moviesModel.getComments()
+        this._moviesModel.getComments(),
       );
       this._filmDetailsComponent.removeCommentHandlerEvent();
 
       this._filmDetailsComponent.setCloseBtnClickHandler(
-        this._handleCloseBtnClick
+        this._handleCloseBtnClick,
       );
       this._filmDetailsComponent.setWatchlistClickHandler(() => {
         this._posTop = this._filmDetailsComponent.getElement().scrollTop;
@@ -368,7 +348,7 @@ export default class MovieList {
           UpdateType.MINOR,
           Object.assign({}, film, {
             watchlist: !film.watchlist,
-          })
+          }),
         );
       });
 
@@ -379,7 +359,7 @@ export default class MovieList {
           UpdateType.MINOR,
           Object.assign({}, film, {
             alreadyWatched: !film.alreadyWatched,
-          })
+          }),
         );
       });
 
@@ -390,7 +370,7 @@ export default class MovieList {
           UpdateType.MINOR,
           Object.assign({}, film, {
             favorite: !film.favorite,
-          })
+          }),
         );
       });
 
@@ -401,14 +381,14 @@ export default class MovieList {
           this._handleViewAction(
             UserAction.DELETE_COMMENT,
             UpdateType.MINOR,
-            commentId
+            commentId,
           );
         }
         this._filmDetailsComponent.getElement().scrollTop = this._posTop;
       });
 
       this._filmDetailsComponent.setAddCommentHandler((evt, data) => {
-        if (evt.key === "Escape" || evt.key === "Esc") {
+        if (evt.key === 'Escape' || evt.key === 'Esc') {
           this._removeFilmDetails();
           this._openedMovieId = null;
 
@@ -430,18 +410,18 @@ export default class MovieList {
           this._handleViewAction(
             UserAction.ADD_COMMENT,
             UpdateType.MINOR,
-            commentData
+            commentData,
           );
           this._filmDetailsComponent.getElement().scrollTop = this._posTop;
         }
       });
 
-      this._bodyContainer.classList.add("hide-overflow");
+      this._bodyContainer.classList.add('hide-overflow');
 
       render(
         this._bodyContainer,
         this._filmDetailsComponent,
-        RenderPosition.BEFOREEND
+        RenderPosition.BEFOREEND,
       );
       this._filmDetailsComponent.getElement().scrollTop = this._posTop;
     });
@@ -450,7 +430,7 @@ export default class MovieList {
   _removeFilmDetails() {
     this._filmDetailsComponent.removeCommentHandlerEvent();
     remove(this._filmDetailsComponent);
-    this._bodyContainer.classList.remove("hide-overflow");
+    this._bodyContainer.classList.remove('hide-overflow');
   }
 
   _handleCloseBtnClick() {
@@ -473,14 +453,14 @@ export default class MovieList {
   _renderTopRated() {
     this._renderExstraFilms(
       this._moviesRatingSort,
-      this._topRatedContainerComponent
+      this._topRatedContainerComponent,
     );
   }
 
   _renderMostCommented() {
     this._renderExstraFilms(
       this._moviesCommentCountSort,
-      this._mostCommentedContainerComponent
+      this._mostCommentedContainerComponent,
     );
   }
 
@@ -489,7 +469,7 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._noMoviesComponent,
-      RenderPosition.AFTERBEGIN
+      RenderPosition.AFTERBEGIN,
     );
   }
 
@@ -497,7 +477,7 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._loadingComponent,
-      RenderPosition.AFTERBEGIN
+      RenderPosition.AFTERBEGIN,
     );
   }
 
@@ -528,16 +508,36 @@ export default class MovieList {
     render(
       this._mainContainer,
       this._filmsContainerComponent,
-      RenderPosition.BEFOREEND
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._filmsContainerComponent,
+      this._topRatedComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._filmsContainerComponent,
+      this._mostCommentedComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._topRatedComponent,
+      this._topRatedContainerComponent,
+      RenderPosition.BEFOREEND,
+    );
+    render(
+      this._mostCommentedComponent,
+      this._mostCommentedContainerComponent,
+      RenderPosition.BEFOREEND,
     );
 
     this._renderMovies(
-      movies.slice(0, Math.min(moviesCount, this._renderedMoviesCount))
+      movies.slice(0, Math.min(moviesCount, this._renderedMoviesCount)),
     );
 
     if (this._openedMovieId !== null) {
       this._renderFilmDetails(
-        allMovies.filter((movie) => movie.id === this._openedMovieId)[0]
+        allMovies.filter((movie) => movie.id === this._openedMovieId)[0],
       );
       this._filmDetailsComponent.getElement().scrollTop = this._posTop;
     }
@@ -585,7 +585,7 @@ export default class MovieList {
     } else {
       this._renderedMoviesCount = Math.min(
         moviesCount,
-        this._renderedMoviesCount
+        this._renderedMoviesCount,
       );
     }
 

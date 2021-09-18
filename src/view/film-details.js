@@ -112,7 +112,9 @@ const getFilmDetailsTemplate = (data, comments) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${hoursMinsRuntime}</td>
+                <td class="film-details__cell">${hoursMinsRuntime.hours}h ${
+  hoursMinsRuntime.minutes
+}h</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
