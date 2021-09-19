@@ -9,7 +9,6 @@ import MostCommented from '../view/most-commented.js';
 import TopRated from '../view/top-rated.js';
 import TopRatedContainer from '../view/top-rated-container.js';
 import MostCommentedContainer from '../view/most-commented-container.js';
-import FooterStat from '../view/footer-stat.js';
 import NoFilmsView from '../view/no-films.js';
 import FilmDetails from '../view/film-details.js';
 import LoadingView from '../view/loading.js';
@@ -32,7 +31,6 @@ export default class MovieList {
     bodyContainer,
     mainContainer,
     headerContainer,
-    footerStatisticsContainer,
     moviesModel,
     filterModel,
     api,
@@ -42,7 +40,6 @@ export default class MovieList {
     this._mainContainer = mainContainer;
     this._bodyContainer = bodyContainer;
     this._headerContainer = headerContainer;
-    this._footerContainer = footerStatisticsContainer;
     this._api = api;
     this._renderedMoviesCount = FILM_STEP_COUNT;
     this._moviePresenter = new Map();
@@ -284,15 +281,6 @@ export default class MovieList {
     render(
       this._filmsListComponent,
       this._moreBtnComponent,
-      RenderPosition.BEFOREEND,
-    );
-  }
-
-  _renderFooterStatistics(movies) {
-    this._footerStatisticsComponent = new FooterStat(movies.length);
-    render(
-      this._footerContainer,
-      this._footerStatisticsComponent,
       RenderPosition.BEFOREEND,
     );
   }
@@ -545,7 +533,6 @@ export default class MovieList {
     this._renderTopRated();
     this._renderMostCommented();
     this._renderHeaderProfile(allMovies);
-    this._renderFooterStatistics(allMovies);
 
     if (moviesCount > this._renderedMoviesCount) {
       this._renderMoreBtn();
@@ -567,7 +554,6 @@ export default class MovieList {
 
     remove(this._moreBtnComponent);
     remove(this._headerProfileComponent);
-    remove(this._footerStatisticsComponent);
     remove(this._sortMenuComponent);
     remove(this._mostCommentedComponent);
     remove(this._topRatedComponent);
