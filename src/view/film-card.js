@@ -2,7 +2,7 @@ import AbstractView from './abstract-view';
 import dayjs from 'dayjs';
 import { getHoursMins } from '../utils/common.js';
 
-const SYMBOL_COUNT = 140;
+const SYMBOL_COUNT = 139;
 
 const getFilmCardTemplate = (film) => {
   const {
@@ -19,7 +19,6 @@ const getFilmCardTemplate = (film) => {
     alreadyWatched,
     favorite,
   } = film;
-
   const hoursMinsRuntime = getHoursMins(runtime);
 
   return `<article class="film-card">
@@ -27,7 +26,9 @@ const getFilmCardTemplate = (film) => {
     <p class="film-card__rating">${totalRating}</p>
     <p class="film-card__info">
       <span class="film-card__year">${dayjs(date).format('YYYY')}</span>
-      <span class="film-card__duration">${hoursMinsRuntime}</span>
+      <span class="film-card__duration">${
+  hoursMinsRuntime.hours ? `${hoursMinsRuntime.hours}h` : ''
+} ${hoursMinsRuntime.minutes ? `${hoursMinsRuntime.minutes}m` : ''}</span>
       <span class="film-card__genre">${genre.join(', ')}</span>
     </p>
     <img src="./${poster}" alt="" class="film-card__poster" data-popup="${id}">
