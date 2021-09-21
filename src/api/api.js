@@ -1,10 +1,10 @@
-import MoviesModel from './model/movies.js';
+import MoviesModel from "../model/movies.js";
 
 const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
+  GET: "GET",
+  PUT: "PUT",
+  POST: "POST",
+  DELETE: "DELETE",
 };
 
 const SuccessHTTPStatusRange = {
@@ -19,7 +19,7 @@ export default class Api {
   }
 
   getMovies() {
-    return this._load({ url: 'movies' })
+    return this._load({ url: "movies" })
       .then(Api.toJSON)
       .then((movies) => movies.map(MoviesModel.adaptToClient));
   }
@@ -29,7 +29,7 @@ export default class Api {
       url: `movies/${movie.id}`,
       method: Method.PUT,
       body: JSON.stringify(MoviesModel.adaptToServer(movie)),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers({ "Content-Type": "application/json" }),
     })
       .then(Api.toJSON)
       .then(MoviesModel.adaptToClient);
@@ -44,7 +44,7 @@ export default class Api {
       url: `comments/${commentData.movieId}`,
       method: Method.POST,
       body: JSON.stringify(commentData.localComment),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers({ "Content-Type": "application/json" }),
     }).then(Api.toJSON);
   }
 
@@ -52,12 +52,12 @@ export default class Api {
     return this._load({
       url: `comments/${commentId}`,
       method: Method.DELETE,
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers({ "Content-Type": "application/json" }),
     });
   }
 
   _load({ url, method = Method.GET, body = null, headers = new Headers() }) {
-    headers.append('Authorization', this._authorization);
+    headers.append("Authorization", this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, { method, body, headers })
       .then(Api.checkStatus)

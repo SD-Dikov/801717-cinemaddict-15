@@ -1,4 +1,5 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
+import { ProfileRatings } from "../const.js";
 
 const getProfileRating = (films) => {
   const alreadyWatchedFilms = films.filter((item) => item.alreadyWatched);
@@ -9,13 +10,13 @@ const getProfileRating = (films) => {
   if (alreadyWatchedFilmsCount) {
     switch (true) {
       case alreadyWatchedFilmsCount >= 1 && alreadyWatchedFilmsCount <= 10:
-        profileRating = 'Novice';
+        profileRating = ProfileRatings.NOVICE;
         break;
       case alreadyWatchedFilmsCount >= 11 && alreadyWatchedFilmsCount <= 20:
-        profileRating = 'Fan';
+        profileRating = ProfileRatings.FAN;
         break;
       case alreadyWatchedFilmsCount >= 21:
-        profileRating = 'Movie Buff';
+        profileRating = ProfileRatings.MOVIE_BUFF;
         break;
     }
   }
@@ -64,7 +65,7 @@ const getRatingGenre = (movies) => {
 const getTopGenre = (genreRating) => {
   const topRating = Object.values(genreRating).sort((a, b) => b - a)[0];
   const topGenre = Object.keys(genreRating).find(
-    (key) => genreRating[key] === topRating,
+    (key) => genreRating[key] === topRating
   );
   return topGenre;
 };
@@ -72,20 +73,20 @@ const getTopGenre = (genreRating) => {
 const getMoviesFromPeriod = (movies, period) => {
   let beginPeriodDate = null;
   switch (period) {
-    case 'all':
+    case "all":
       beginPeriodDate = null;
       break;
-    case 'today':
+    case "today":
       beginPeriodDate = dayjs();
       break;
-    case 'week':
-      beginPeriodDate = dayjs().subtract(7, 'day');
+    case "week":
+      beginPeriodDate = dayjs().subtract(7, "day");
       break;
-    case 'month':
-      beginPeriodDate = dayjs().subtract(1, 'month');
+    case "month":
+      beginPeriodDate = dayjs().subtract(1, "month");
       break;
-    case 'year':
-      beginPeriodDate = dayjs().subtract(1, 'year');
+    case "year":
+      beginPeriodDate = dayjs().subtract(1, "year");
       break;
     default:
       beginPeriodDate = null;
@@ -97,10 +98,10 @@ const getMoviesFromPeriod = (movies, period) => {
   }
 
   const filteredMovies = movies.filter((movie) => {
-    if (period === 'today') {
+    if (period === "today") {
       return (
-        beginPeriodDate.format('DD/MM/YYYY') ===
-        dayjs(movie.watchingDate).format('DD/MM/YYYY')
+        beginPeriodDate.format("DD/MM/YYYY") ===
+        dayjs(movie.watchingDate).format("DD/MM/YYYY")
       );
     } else {
       return beginPeriodDate.isBefore(dayjs(movie.watchingDate));
@@ -116,5 +117,5 @@ export {
   getTotalDuration,
   getRatingGenre,
   getTopGenre,
-  getMoviesFromPeriod
+  getMoviesFromPeriod,
 };
