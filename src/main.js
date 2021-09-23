@@ -5,13 +5,21 @@ import FilterModel from "./model/filter.js";
 import StatisticView from "./view/statistic.js";
 import FooterStat from "./view/footer-stat.js";
 import Api from "./api/api.js";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
 import { MenuItem, UpdateType } from "./const.js";
 import { render, RenderPosition, remove } from "./utils/render.js";
+import { toast, removeToast } from "./utils/toast.js";
 
 const AUTHORIZATION = "Basic 801717cinemaDD15";
 const END_POINT = "https://15.ecmascript.pages.academy/cinemaddict/";
+const STORE_PREFIX = "cinemaddict-localstorage";
+const STORE_VER = "v15";
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
@@ -32,7 +40,7 @@ const moviePresenter = new MovieList(
   siteHeaderElement,
   moviesModel,
   filterModel,
-  api
+  apiWithProvider
 );
 
 const handleSiteMenuClick = (menuItem) => {
@@ -73,7 +81,7 @@ const filterPresenter = new FilterPresenter(
 filterPresenter.init();
 moviePresenter.init();
 
-api
+apiWithProvider
   .getMovies()
   .then((movies) => {
     moviesModel.setMovies(UpdateType.INIT, movies);
@@ -89,4 +97,13 @@ api
 
 window.addEventListener("load", () => {
   navigator.serviceWorker.register("/sw.js");
+});
+
+window.addEventListener("online", () => {
+  removeToast();
+  apiWithProvider.sync();
+});
+
+window.addEventListener("offline", () => {
+  toast("Offline");
 });

@@ -2,7 +2,7 @@ import MoviesModel from "../model/movies.js";
 import { isOnline } from "../utils/common.js";
 
 const getSyncedMovies = (items) =>
-  items.filter(({ success }) => success).map(({ payload }) => payload.task);
+  items.filter(({ success }) => success).map(({ payload }) => payload.movie);
 
 const createStoreStructure = (items) =>
   items.reduce(
@@ -91,14 +91,14 @@ export default class Provider {
 
   sync() {
     if (isOnline()) {
-      const storeTasks = Object.values(this._store.getItems());
+      const storeMovies = Object.values(this._store.getItems());
 
-      return this._api.sync(storeTasks).then((response) => {
-        const createdMovies = getSyncedMovies(response.created);
+      return this._api.sync(storeMovies).then((response) => {
+        const createdComment = getSyncedMovies(response.created);
         const updatedMovies = getSyncedMovies(response.updated);
 
         const items = createStoreStructure([
-          ...createdMovies,
+          ...createdComment,
           ...updatedMovies,
         ]);
 

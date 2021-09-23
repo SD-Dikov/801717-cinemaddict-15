@@ -1,7 +1,7 @@
 import he from "he";
 import SmartView from "./smart-view";
 import dayjs from "dayjs";
-import { getHoursMins } from "../utils/common.js";
+import { getHoursMins, getAgoTime } from "../utils/common.js";
 
 const SHAKE_ANIMATION_TIMEOUT = 1000;
 
@@ -47,9 +47,7 @@ const getFilmDetailsTemplate = (data, comments) => {
       <p class="film-details__comment-text">${item.comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
-        <span class="film-details__comment-day">${dayjs(item.date).format(
-          "YYYY/MMMM/DD/ hh:mm"
-        )}</span>
+        <span class="film-details__comment-day">${getAgoTime(item.date)}</span>
         <button class="film-details__comment-delete" data-comment='${
           item.id
         }' ${isDeleting ? "disabled='disabled' style='opacity: 0.5;'" : ""}>
