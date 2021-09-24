@@ -17,6 +17,14 @@ export default class Movies extends AbstractObserver {
     return this._movies.slice();
   }
 
+  setComments(comments) {
+    this._comments = comments.slice();
+  }
+
+  getComments() {
+    return this._comments;
+  }
+
   updateMovie(updateType, update) {
     const index = this._movies.findIndex(
       (movie) => Number(movie.id) === Number(update.id),
@@ -32,14 +40,6 @@ export default class Movies extends AbstractObserver {
     ];
 
     this._notify(updateType, update);
-  }
-
-  setComments(comments) {
-    this._comments = comments.slice();
-  }
-
-  getComments() {
-    return this._comments;
   }
 
   addComment(updateType, update) {

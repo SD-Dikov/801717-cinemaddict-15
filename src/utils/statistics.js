@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { ProfileRatings } from '../const.js';
 
 const getProfileRating = (films) => {
   const alreadyWatchedFilms = films.filter((item) => item.alreadyWatched);
@@ -9,13 +10,13 @@ const getProfileRating = (films) => {
   if (alreadyWatchedFilmsCount) {
     switch (true) {
       case alreadyWatchedFilmsCount >= 1 && alreadyWatchedFilmsCount <= 10:
-        profileRating = 'Novice';
+        profileRating = ProfileRatings.NOVICE;
         break;
       case alreadyWatchedFilmsCount >= 11 && alreadyWatchedFilmsCount <= 20:
-        profileRating = 'Fan';
+        profileRating = ProfileRatings.FAN;
         break;
       case alreadyWatchedFilmsCount >= 21:
-        profileRating = 'Movie Buff';
+        profileRating = ProfileRatings.MOVIE_BUFF;
         break;
     }
   }

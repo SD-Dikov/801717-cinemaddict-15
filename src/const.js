@@ -37,4 +37,18 @@ const MenuItem = {
   STATISTICS: 'statistics',
 };
 
-export { UserAction, UpdateType, FilterType, State, SortType, MenuItem };
+const ProfileRatings = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff',
+};
+
+export {
+  UserAction,
+  UpdateType,
+  FilterType,
+  State,
+  SortType,
+  MenuItem,
+  ProfileRatings
+};

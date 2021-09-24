@@ -34,6 +34,19 @@ export default class MainNavigation extends AbstractView {
       this._siteMenuItemChangeHandler.bind(this);
   }
 
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.getElement().addEventListener('click', this._filterTypeChangeHandler);
+  }
+
+  setSiteMenuItemChangeHandler(callback) {
+    this._callback.siteMenuItemChange = callback;
+    this.getElement().addEventListener(
+      'click',
+      this._siteMenuItemChangeHandler,
+    );
+  }
+
   getTemplate() {
     return generateMainNavigationTemplate(this._filters, this._currentFilter);
   }
@@ -46,18 +59,5 @@ export default class MainNavigation extends AbstractView {
   _siteMenuItemChangeHandler(evt) {
     evt.preventDefault();
     this._callback.siteMenuItemChange(evt.target.dataset.navigation);
-  }
-
-  setFilterTypeChangeHandler(callback) {
-    this._callback.filterTypeChange = callback;
-    this.getElement().addEventListener('click', this._filterTypeChangeHandler);
-  }
-
-  setSiteMenuItemChangeHandler(callback) {
-    this._callback.siteMenuItemChange = callback;
-    this.getElement().addEventListener(
-      'click',
-      this._siteMenuItemChangeHandler,
-    );
   }
 }

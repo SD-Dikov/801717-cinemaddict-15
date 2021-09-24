@@ -173,6 +173,21 @@ export default class StatisticView extends SmartView {
     this._setCharts();
   }
 
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.statistic__filters')
+      .addEventListener('input', this._periodChangeHandler);
+  }
+
+  _setCharts() {
+    const statisticCtx = this.getElement().querySelector('.statistic__chart');
+    const watchedMoviesCount = getWatchedMoviesCount(this._data.movies);
+
+    if (watchedMoviesCount) {
+      renderChart(statisticCtx, this._data);
+    }
+  }
+
   getTemplate() {
     return generateStatisticTamplate(this._data, this._movies);
   }
@@ -184,12 +199,6 @@ export default class StatisticView extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setCharts();
-  }
-
-  _setInnerHandlers() {
-    this.getElement()
-      .querySelector('.statistic__filters')
-      .addEventListener('input', this._periodChangeHandler);
   }
 
   _periodChangeHandler(evt) {
@@ -204,14 +213,5 @@ export default class StatisticView extends SmartView {
       .querySelector(`#statistic-${periodValue}`)
       .setAttribute('checked', 'true');
     window.scrollTo(0, scrollPosition);
-  }
-
-  _setCharts() {
-    const statisticCtx = this.getElement().querySelector('.statistic__chart');
-    const watchedMoviesCount = getWatchedMoviesCount(this._data.movies);
-
-    if (watchedMoviesCount) {
-      renderChart(statisticCtx, this._data);
-    }
   }
 }
