@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const getHoursMins = (mins) => {
   const hours = Math.floor(mins / 60);
@@ -25,32 +25,32 @@ const getAgoTime = (date) => {
 
   let agoTime;
   switch (true) {
-    case nowDate.diff(date, "second") < 60:
-      agoTime = "just now";
+    case nowDate.diff(date, 'second') < 60:
+      agoTime = 'just now';
       break;
-    case nowDate.diff(date, "minute") < 60:
-      agoTime = "a few minutes ago";
+    case nowDate.diff(date, 'minute') < 60:
+      agoTime = 'a few minutes ago';
       break;
-    case nowDate.diff(date, "hour") < 24:
-      agoTime = `${nowDate.diff(date, "hour")} hours ago`;
+    case nowDate.diff(date, 'hour') < 24:
+      agoTime = `${nowDate.diff(date, 'hour')} hours ago`;
       break;
-    case nowDate.diff(date, "day") < 2:
-      agoTime = "yesterday";
+    case nowDate.diff(date, 'day') < 2:
+      agoTime = 'yesterday';
       break;
-    case nowDate.diff(date, "day") < 14:
-      agoTime = `${nowDate.diff(date, "day")} days ago`;
+    case nowDate.diff(date, 'day') < 14:
+      agoTime = `${nowDate.diff(date, 'day')} days ago`;
       break;
-    case nowDate.diff(date, "week") < 4:
-      agoTime = `${nowDate.diff(date, "week")} weeks ago`;
+    case nowDate.diff(date, 'week') < 4:
+      agoTime = `${nowDate.diff(date, 'week')} weeks ago`;
       break;
-    case nowDate.diff(date, "month") < 12:
-      agoTime = `${nowDate.diff(date, "month")} ${
-        nowDate.diff(date, "month") > 1 ? "months" : "month"
+    case nowDate.diff(date, 'month') < 12:
+      agoTime = `${nowDate.diff(date, 'month')} ${
+        nowDate.diff(date, 'month') > 1 ? 'months' : 'month'
       } ago`;
       break;
     default:
-      agoTime = `${nowDate.diff(date, "year")} ${
-        nowDate.diff(date, "year") > 1 ? "years" : "year"
+      agoTime = `${nowDate.diff(date, 'year')} ${
+        nowDate.diff(date, 'year') > 1 ? 'years' : 'year'
       } ago`;
       break;
   }
@@ -63,5 +63,5 @@ export {
   getRandomInteger,
   getTenthsRandomInteger,
   isOnline,
-  getAgoTime,
+  getAgoTime
 };

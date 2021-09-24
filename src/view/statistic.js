@@ -1,15 +1,15 @@
-import SmartView from "./smart-view";
-import Chart from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { getHoursMins } from "../utils/common.js";
+import SmartView from './smart-view';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { getHoursMins } from '../utils/common.js';
 import {
   getProfileRating,
   getWatchedMoviesCount,
   getTotalDuration,
   getRatingGenre,
   getTopGenre,
-  getMoviesFromPeriod,
-} from "../utils/statistics.js";
+  getMoviesFromPeriod
+} from '../utils/statistics.js';
 
 const BAR_HEIGHT = 50;
 
@@ -18,7 +18,7 @@ const renderChart = (statisticCtx, data) => {
   const ratingCounts = Object.values(genreRating).sort((a, b) => b - a);
   const ganreLabels = ratingCounts.map((item) => {
     const genre = Object.keys(genreRating).find(
-      (key) => genreRating[key] === item
+      (key) => genreRating[key] === item,
     );
     delete genreRating[genre];
     return genre;
@@ -28,15 +28,15 @@ const renderChart = (statisticCtx, data) => {
 
   const genreChart = new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
-    type: "horizontalBar",
+    type: 'horizontalBar',
     data: {
       labels: ganreLabels,
       datasets: [
         {
           data: ratingCounts,
-          backgroundColor: "#ffe800",
-          hoverBackgroundColor: "#ffe800",
-          anchor: "start",
+          backgroundColor: '#ffe800',
+          hoverBackgroundColor: '#ffe800',
+          anchor: 'start',
         },
       ],
     },
@@ -46,9 +46,9 @@ const renderChart = (statisticCtx, data) => {
           font: {
             size: 20,
           },
-          color: "#ffffff",
-          anchor: "start",
-          align: "start",
+          color: '#ffffff',
+          anchor: 'start',
+          align: 'start',
           offset: 40,
         },
       },
@@ -56,7 +56,7 @@ const renderChart = (statisticCtx, data) => {
         yAxes: [
           {
             ticks: {
-              fontColor: "#ffffff",
+              fontColor: '#ffffff',
               padding: 100,
               fontSize: 20,
             },
@@ -98,19 +98,19 @@ const generateStatisticTamplate = (data, movies) => {
   const totalDuration = getTotalDuration(data.movies);
   const hoursMinsRuntime = getHoursMins(totalDuration);
   const ratingGenre = getRatingGenre(data.movies);
-  const topGenre = watchedMoviesCount ? getTopGenre(ratingGenre) : "";
+  const topGenre = watchedMoviesCount ? getTopGenre(ratingGenre) : '';
   getTopGenre(data.movies);
 
   return `<section class="statistic">
   ${
-    profileRating
-      ? `<p class="statistic__rank">
+  profileRating
+    ? `<p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     <span class="statistic__rank-label">${profileRating}</span>
   </p>`
-      : ""
-  }
+    : ''
+}
 
   <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
     <p class="statistic__filters-description">Show stats:</p>
@@ -139,10 +139,10 @@ const generateStatisticTamplate = (data, movies) => {
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Total duration</h4>
       <p class="statistic__item-text">${
-        hoursMinsRuntime.hours
-      } <span class="statistic__item-description">h</span> ${
-    hoursMinsRuntime.minutes
-  } <span class="statistic__item-description">m</span></p>
+  hoursMinsRuntime.hours
+} <span class="statistic__item-description">h</span> ${
+  hoursMinsRuntime.minutes
+} <span class="statistic__item-description">m</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
@@ -163,8 +163,8 @@ export default class StatisticView extends SmartView {
 
     this._movies = movies;
     this._data = {
-      period: "all",
-      movies: getMoviesFromPeriod(this._movies, "all"),
+      period: 'all',
+      movies: getMoviesFromPeriod(this._movies, 'all'),
     };
 
     this._periodChangeHandler = this._periodChangeHandler.bind(this);
@@ -175,12 +175,12 @@ export default class StatisticView extends SmartView {
 
   _setInnerHandlers() {
     this.getElement()
-      .querySelector(".statistic__filters")
-      .addEventListener("input", this._periodChangeHandler);
+      .querySelector('.statistic__filters')
+      .addEventListener('input', this._periodChangeHandler);
   }
 
   _setCharts() {
-    const statisticCtx = this.getElement().querySelector(".statistic__chart");
+    const statisticCtx = this.getElement().querySelector('.statistic__chart');
     const watchedMoviesCount = getWatchedMoviesCount(this._data.movies);
 
     if (watchedMoviesCount) {
@@ -211,7 +211,7 @@ export default class StatisticView extends SmartView {
     });
     document
       .querySelector(`#statistic-${periodValue}`)
-      .setAttribute("checked", "true");
+      .setAttribute('checked', 'true');
     window.scrollTo(0, scrollPosition);
   }
 }

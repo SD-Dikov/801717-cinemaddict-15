@@ -1,51 +1,51 @@
-const CACHE_PREFIX = "cinemaddict-cache";
-const CACHE_VER = "v15";
+const CACHE_PREFIX = 'cinemaddict-cache';
+const CACHE_VER = 'v15';
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VER}`;
 
 const HTTP_STATUS_OK = 200;
-const RESPONSE_SAFE_TYPE = "basic";
+const RESPONSE_SAFE_TYPE = 'basic';
 
-self.addEventListener("install", (evt) => {
+self.addEventListener('install', (evt) => {
   evt.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) =>
         cache.addAll([
-          "/",
-          "/index.html",
-          "/bundle.js",
-          "/css/normalize.css",
-          "/css/main.css",
-          "/fonts/OpenSans-Bold.woff2",
-          "/fonts/OpenSans-ExtraBold.woff2",
-          "/fonts/OpenSans-Regular.woff2",
-          "/images/emoji/angry.png",
-          "/images/emoji/puke.png",
-          "/images/emoji/sleeping.png",
-          "/images/emoji/smile.png",
-          "/images/icons/icon-watchlist-active.svg",
-          "/images/icons/icon-watchlist.svg",
-          "/images/icons/icon-watched-active.svg",
-          "/images/icons/icon-watched.svg",
-          "/images/icons/icon-favorite-active.svg",
-          "/images/icons/icon-favorite.svg",
-          "/images/posters/the-man-with-the-golden-arm.jpg",
-          "/images/posters/the-great-flamarion.jpg",
-          "/images/posters/the-dance-of-life.jpg",
-          "/images/posters/sagebrush-trail.jpg",
-          "/images/posters/popeye-meets-sinbad.png",
-          "/images/posters/made-for-each-other.png",
-          "/images/posters/santa-claus-conquers-the-martians.jpg",
-          "/images/bitmap@3x.png",
-          "/images/bitmap@2x.png",
-          "/images/bitmap.png",
-          "/images/background.png",
-        ])
-      )
+          '/',
+          '/index.html',
+          '/bundle.js',
+          '/css/normalize.css',
+          '/css/main.css',
+          '/fonts/OpenSans-Bold.woff2',
+          '/fonts/OpenSans-ExtraBold.woff2',
+          '/fonts/OpenSans-Regular.woff2',
+          '/images/emoji/angry.png',
+          '/images/emoji/puke.png',
+          '/images/emoji/sleeping.png',
+          '/images/emoji/smile.png',
+          '/images/icons/icon-watchlist-active.svg',
+          '/images/icons/icon-watchlist.svg',
+          '/images/icons/icon-watched-active.svg',
+          '/images/icons/icon-watched.svg',
+          '/images/icons/icon-favorite-active.svg',
+          '/images/icons/icon-favorite.svg',
+          '/images/posters/the-man-with-the-golden-arm.jpg',
+          '/images/posters/the-great-flamarion.jpg',
+          '/images/posters/the-dance-of-life.jpg',
+          '/images/posters/sagebrush-trail.jpg',
+          '/images/posters/popeye-meets-sinbad.png',
+          '/images/posters/made-for-each-other.png',
+          '/images/posters/santa-claus-conquers-the-martians.jpg',
+          '/images/bitmap@3x.png',
+          '/images/bitmap@2x.png',
+          '/images/bitmap.png',
+          '/images/background.png',
+        ]),
+      ),
   );
 });
 
-self.addEventListener("activate", (evt) => {
+self.addEventListener('activate', (evt) => {
   evt.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -57,9 +57,9 @@ self.addEventListener("activate", (evt) => {
 
             return null;
           })
-          .filter((key) => key !== null)
-      )
-    )
+          .filter((key) => key !== null),
+      ),
+    ),
   );
 });
 
@@ -89,8 +89,8 @@ const handleFetch = (evt) => {
 
         return response;
       });
-    })
+    }),
   );
 };
 
-self.addEventListener("fetch", handleFetch);
+self.addEventListener('fetch', handleFetch);

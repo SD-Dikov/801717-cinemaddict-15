@@ -1,5 +1,5 @@
-import MoviesModel from "../model/movies.js";
-import { isOnline } from "../utils/common.js";
+import MoviesModel from '../model/movies.js';
+import { isOnline } from '../utils/common.js';
 
 const getSyncedMovies = (items) =>
   items.filter(({ success }) => success).map(({ payload }) => payload.movie);
@@ -10,7 +10,7 @@ const createStoreStructure = (items) =>
       Object.assign({}, acc, {
         [current.id]: current,
       }),
-    {}
+    {},
   );
 
 export default class Provider {
@@ -23,7 +23,7 @@ export default class Provider {
     if (isOnline()) {
       return this._api.getMovies().then((movies) => {
         const items = createStoreStructure(
-          movies.map(MoviesModel.adaptToServer)
+          movies.map(MoviesModel.adaptToServer),
         );
         this._store.setItems(items);
         return movies;
@@ -40,7 +40,7 @@ export default class Provider {
       return this._api.updateMovie(movie).then((updatedMovie) => {
         this._store.setItem(
           updatedMovie.id,
-          MoviesModel.adaptToServer(updatedMovie)
+          MoviesModel.adaptToServer(updatedMovie),
         );
         return updatedMovie;
       });
@@ -48,7 +48,7 @@ export default class Provider {
 
     this._store.setItem(
       movie.id,
-      MoviesModel.adaptToServer(Object.assign({}, movie))
+      MoviesModel.adaptToServer(Object.assign({}, movie)),
     );
 
     return Promise.resolve(movie);
@@ -76,7 +76,7 @@ export default class Provider {
       });
     }
 
-    return Promise.reject(new Error("Add comment failed"));
+    return Promise.reject(new Error('Add comment failed'));
   }
 
   deleteComment(commentId) {
@@ -86,7 +86,7 @@ export default class Provider {
         .then(() => this._store.removeItem(commentId));
     }
 
-    return Promise.reject(new Error("Delete comment failed"));
+    return Promise.reject(new Error('Delete comment failed'));
   }
 
   sync() {
@@ -94,18 +94,14 @@ export default class Provider {
       const storeMovies = Object.values(this._store.getItems());
 
       return this._api.sync(storeMovies).then((response) => {
-        const createdComment = getSyncedMovies(response.created);
         const updatedMovies = getSyncedMovies(response.updated);
 
-        const items = createStoreStructure([
-          ...createdComment,
-          ...updatedMovies,
-        ]);
+        const items = createStoreStructure([...updatedMovies]);
 
         this._store.setItems(items);
       });
     }
 
-    return Promise.reject(new Error("Sync data failed"));
+    return Promise.reject(new Error('Sync data failed'));
   }
 }
