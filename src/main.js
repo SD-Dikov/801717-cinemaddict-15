@@ -30,9 +30,6 @@ const footerStatisticsElement = bodyElement.querySelector(
   '.footer__statistics',
 );
 
-const getMainNavigationAdditional = () =>
-  bodyElement.querySelector('.main-navigation__additional');
-
 let statisticsComponent = null;
 let currentMenuItem = MenuItem.MOVIES;
 
@@ -49,23 +46,18 @@ const handleSiteMenuClick = (menuItem) => {
   if (currentMenuItem === menuItem) {
     return;
   }
+
   switch (menuItem) {
     case MenuItem.MOVIES:
       moviePresenter.init();
       remove(statisticsComponent);
       currentMenuItem = MenuItem.MOVIES;
-      getMainNavigationAdditional().classList.remove(
-        'main-navigation__additional--active',
-      );
       break;
     case MenuItem.STATISTICS:
       moviePresenter.destroy();
       statisticsComponent = new StatisticView(moviesModel.getMovies());
       render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       currentMenuItem = MenuItem.STATISTICS;
-      getMainNavigationAdditional().classList.add(
-        'main-navigation__additional--active',
-      );
       break;
   }
 };
